@@ -202,7 +202,7 @@ label.fl{display:block;font-weight:700;font-size:14px;margin-bottom:8px}
 .legend span{display:inline-flex;align-items:center;gap:7px}
 .legend i{width:12px;height:12px;border-radius:50%;display:inline-block}
 .xc{border:1px solid var(--line);border-radius:var(--r);background:var(--navy-2);margin-bottom:12px;overflow:hidden}
-.xc-h{display:grid;grid-template-columns:170px 1fr auto;gap:20px;align-items:center;width:100%;padding:18px 22px;text-align:left}
+.xc-h{display:grid;grid-template-columns:170px 1fr 236px;gap:20px;align-items:center;width:100%;padding:18px 22px;text-align:left}
 .xc-h h3{font-size:18px}
 .xc-b{padding:6px 22px 24px;display:grid;gap:22px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -431,7 +431,7 @@ const LINKS=[
  {a:'resilience',b:'ingenuity',first:'resilience',t:"Ingenuity depends on Resilience. You can't see options while you're thrown by the problem. Steady the state first, then ask for options."},
  {a:'assertiveness',b:'decisiveness',first:'assertiveness',t:"Assertiveness feeds Decisiveness. People who avoid the conversation tend to avoid the decision. Start with the conversation they're putting off."}];
 const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
-const NOW='2026-11',TODAY='2026-11-11',STD=7;
+const NOW='2026-11',TODAY=(()=>{const d=new Date(),s=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');return s<'2026-11-11'?'2026-11-11':s>'2026-11-30'?'2026-11-30':s})(),STD=7;
 const mName=m=>MN[+m.slice(5,7)-1], mShort=m=>mName(m).slice(0,3);
 const fDate=d=>d?(+d.slice(8,10))+' '+MN[+d.slice(5,7)-1].slice(0,3):'';
 const fDateL=d=>d?(+d.slice(8,10))+' '+MN[+d.slice(5,7)-1]+' '+d.slice(0,4):'';
@@ -511,16 +511,16 @@ function slider(ctx,hid,pid,v,sm,lock){
   <div class="sl-thumbwrap"><div class="sl-thumb" style="left:${v?pct(v):50}%"><span>${v||'‹ ›'}</span></div></div></div>`;
 }
 function mini(marks,std){ // marks:[{v,c,l}]
- return `<div class="mini"><i></i>${std?`<b class="std" style="left:${pct(STD)}%"></b>`:''}${marks.map(k=>`<b class="mk ${k.c}" style="left:${pct(k.v)}%">${k.l}</b>`).join('')}</div>`}
+ return `<div class="mini"><i></i>${std?`<b class="std" style="left:${pct(STD)}%"></b>`:''}${marks.map(k=>{const tw=k.c!=='a'&&marks.some(o=>o!==k&&o.c!=='a'&&o.v===k.v);return `<b class="mk ${k.c}" style="left:${pct(k.v)}%${tw?';transform:translateX('+(k.c==='h'?-10:10)+'px)':''}">${k.l}</b>`}).join('')}</div>`}
 function radar(cur,prev,o={}){
  const S_=o.size||420,c=S_/2,R=S_*0.33;
  const pt=(i,v)=>{const a=(-90+i*60)*Math.PI/180;return [c+Math.cos(a)*R*v/10,c+Math.sin(a)*R*v/10]};
  const poly=a=>a.map((v,i)=>pt(i,v).map(n=>n.toFixed(1)).join(',')).join(' ');
  const rings=[2,4,6,8,10].map(r=>`<polygon points="${poly(Array(6).fill(r))}" fill="none" stroke="rgba(255,255,255,.09)"/>`).join('');
  const spokes=P.map((_,i)=>{const[x,y]=pt(i,10);return `<line x1="${c}" y1="${c}" x2="${x}" y2="${y}" stroke="rgba(255,255,255,.09)"/>`}).join('');
- const labels=P.map((p,i)=>{const side=i%3!==0;const[x,y]=pt(i,o.tight?(side?15.2:12):12.4);const an=o.tight||Math.abs(x-c)<8?'middle':x>c?'start':'end';
+ const labels=P.map((p,i)=>{const side=i%3!==0;const[x,y]=pt(i,o.tight?(side?11.6:12):12.4);const an=Math.abs(x-c)<8?'middle':x>c?'start':'end';
   return `<text x="${x}" y="${y}" text-anchor="${an}" dominant-baseline="middle">${p.name}${cur?`<tspan class="s" dx="6">${cur[i]}</tspan>`:''}</text>`}).join('');
- return `<svg class="radar" viewBox="${o.tight?-S_*0.1:-S_*0.14} ${o.tight?S_*0.06:0} ${o.tight?S_*1.2:S_*1.28} ${o.tight?S_*0.88:S_}" width="100%" role="img" aria-label="Six pillar shape">
+ return `<svg class="radar" viewBox="${o.tight?-S_*0.26:-S_*0.14} ${o.tight?S_*0.04:0} ${o.tight?S_*1.52:S_*1.28} ${o.tight?S_*0.92:S_}" width="100%" role="img" aria-label="Six pillar shape">
   <defs><linearGradient id="rg${o.id||''}" x1="0" x2="1"><stop offset="0" stop-color="#6c3481"/><stop offset="1" stop-color="#c32e81"/></linearGradient></defs>
   ${rings}${spokes}
   ${o.std!==false?`<polygon points="${poly(Array(6).fill(STD))}" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.5" stroke-dasharray="2 5" stroke-linecap="round"/>`:''}
@@ -573,6 +573,7 @@ function modal(){
  <h3>One example for every score</h3><p>Every score needs one real thing that happened, with a date. No example, no score. That goes for strong scores as much as low ones.</p>
  <h3>One case, one pillar</h3><p>When something happens, it counts on one pillar only. Pick the one that fits best. One bad day should never cost you three scores.</p>
  <h3>The gap is the conversation</h3><p>Your number and James's sit side by side. They are never averaged. Where they're furthest apart is where you start talking. Sometimes James will have you higher than you have yourself. You agree the score together in the room.</p>
+ <h3>What the scores are for</h3><p>Development. They are not linked to pay or commission. You see your own scores. James and Scott see every head's.</p>
  <h3>One focus, one assignment</h3><p>You leave with one pillar to work on and one real task to do in the job before next month. Next month opens with how it went.</p>
  <div class="dlg-x"><button class="btn" data-a="close">Close</button></div></div></div>`;
  return '';
@@ -589,7 +590,7 @@ function vModel(){
    <div class="tl">${p.traits.map(t=>`<div><b>${t.n}</b><span>${esc(t.d)}</span></div>`).join('')}</div>
    <div class="fake"><p class="eyebrow">Looks like it but isn't</p><p>${esc(p.fake)}.</p></div>
    <div class="box"><p class="eyebrow">Worked example</p><p>${esc(p.ex.s)}</p><p>${esc(p.ex.r)}</p></div>
-   <div class="box"><p class="eyebrow">James's example</p>${S.role==='james'?`<p><textarea id="jx-${p.id}" data-jx="${p.id}" placeholder="Write the example you use when you explain ${p.name} to a head.">${esc(jx)}</textarea></p><p class="hint">Saves as you type. Heads see this on the pillar page.</p>`:jx?`<p>${esc(jx)}</p>`:`<p class="empty">James will add his own example here.</p>`}</div>
+   <div class="box"><p class="eyebrow">James's example</p>${S.role==='james'?`<p><textarea id="jx-${p.id}" data-jx="${p.id}" placeholder="Write the example you use when you explain ${p.name} to a head.">${esc(jx)}</textarea></p><p class="hint">Saves as you type, and stays when you reset the demo. Heads see this on the pillar page.</p>`:jx?`<p>${esc(jx)}</p>`:`<p class="empty">James will add his own example here.</p>`}</div>
   </div><div>
    <p class="eyebrow" style="margin-bottom:14px">What it looks like</p>
    <div class="ladder">${[9,7,5,3].map(n=>`<div class="rung"><span class="n">${n}</span><div>${n===7?'<small>The standard for a head at SCCU</small>':''}<p>${esc(p.anc[n])}</p></div></div>`).join('')}</div>
@@ -615,7 +616,7 @@ function vSelf(){
  if(c.step<0){const fresh=!h.hist.length;
   return `<div class="intro"><p class="eyebrow">${mName(NOW)} 2026 · Self-score</p><h1>${fresh?`Welcome, ${first(h)}. This is your first one.`:`Where were you this month, ${first(h)}?`}</h1>
   <p class="muted" style="font-size:18px">${fresh?'Once a month you score yourself on six pillars, James scores you, and the two of you compare. It takes about ten minutes.':'Six pillars. About ten minutes. Score what happened this month.'}</p>
-  <ul><li><b>Your score is this month.</b>A hard month can drop a number and a good month brings it back. Nobody is a 5.</li><li><b>One example for every score.</b>One real thing that happened, with a date. No example, no score.</li><li><b>James can't see yours until his are in.</b>And you can't see his until you've submitted.</li></ul>
+  <ul><li><b>Your score is this month.</b>A hard month can drop a number and a good month brings it back. Nobody is a 5.</li><li><b>One example for every score.</b>One real thing that happened, with a date. No example, no score.</li><li><b>James can't see yours until his are in.</b>And you can't see his until you've submitted.</li><li><b>This is for your development.</b>Scores are not linked to pay or commission. You see your own. James and Scott see every head's.</li></ul>
   ${last&&last.asg?`<div class="card" style="margin-bottom:28px"><p class="eyebrow">Your assignment from ${mName(last.m)}</p><p style="margin-top:8px">${esc(last.asg)}</p><p class="hint" style="margin-top:8px">The session opens with how this went. Have your example ready.</p></div>`:''}
   <div class="snav" style="justify-content:flex-start;margin-top:0"><button class="btn" data-a="ss-go" data-id="0">Start scoring</button><button class="btn ghost" data-a="modal" data-id="how">How it works</button></div></div>`}
  const tabs=`<div class="ptabs">${P.map((p,i)=>`<button data-a="ss-go" data-id="${i}" class="${i===c.step?'on':''} ${full(c.self[p.id])?'done':''}">${p.name}</button>`).join('')}<button data-a="ss-go" data-id="6" class="${c.step===6?'on':''}">Review</button></div>`;
@@ -678,7 +679,7 @@ function vSession(){
   <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:14px"><h2 style="font-size:22px">Explore, then agree each score</h2><span class="hint">${ag} of 6 agreed</span></div>
   ${order.map(p=>{const s=c.self[p.id],j=c.james[p.id],g=gap(h,p),open=ui.open===p.id,av=c.agreed[p.id];
    const line=s.s>j.s?"What situations are you basing that on, and what's your evidence?":j.s>s.s?"I've got you higher than you've got yourself. Here's what I saw.":"We've landed in the same place. Which example would you pick?";
-   return `<div class="xc"><button class="xc-h" data-a="xopen" data-id="${p.id}" aria-expanded="${open}"><h3>${p.name}</h3>${mini([{v:s.s,c:'h',l:s.s},{v:j.s,c:'j',l:j.s}].concat(av?[{v:av,c:'a',l:av}]:[]),true)}<span style="display:flex;gap:8px;align-items:center">${j.over?'<span class="chip warn">Overdone</span>':''}${av?`<span class="chip grad">Agreed ${av}</span>${av<STD?'<span class="chip warn">Below standard</span>':''}`:`<span class="chip">${g?'Gap '+g:'Same score'}</span>`}</span></button>
+   return `<div class="xc"><button class="xc-h" data-a="xopen" data-id="${p.id}" aria-expanded="${open}"><h3>${p.name}</h3>${mini([{v:s.s,c:'h',l:s.s},{v:j.s,c:'j',l:j.s}].concat(av?[{v:av,c:'a',l:av}]:[]),true)}<span style="display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap">${j.over?'<span class="chip warn">Overdone</span>':''}${av?`<span class="chip grad">Agreed ${av}</span>${av<STD?'<span class="chip warn">Below standard</span>':''}`:`<span class="chip">${g?'Gap '+g:'Same score'}</span>`}</span></button>
    ${open?`<div class="xc-b"><p class="open-line">${line}</p>
     <div class="two"><div class="ev"><small>${first(h)}'s example · ${fDate(s.d)}</small><p>${esc(s.ex)}</p></div><div class="ev j"><small>Your example · ${fDate(j.d)}</small><p>${esc(j.ex)}</p></div></div>
     ${j.over?`<p class="fakeline" style="margin:0">Overdone. Looks like ${p.name} but isn't: ${esc(p.fake).toLowerCase()}.</p>`:''}
@@ -715,7 +716,7 @@ function vTeam(){
  const act=h=>{const s=status(h);if(S.role!=='james')return `<button class="btn ghost sm" data-a="prof" data-id="${h.id}">Profile</button>`;
   const l={done:'Summary',live:'Continue',ready:'Reveal',score:'Score now',wait:'Open',none:'Score now'}[s.k];
   return `<button class="btn ${s.k==='ready'||s.k==='live'?'':'ghost'} sm" data-a="${s.k==='done'?'sum':'sess'}" data-id="${h.id}">${l}</button>`};
- return `<div class="page-h"><div><p class="eyebrow">${mName(NOW)} 2026 · ${quarter(NOW)} (Sep to Nov)</p><h1>The team this month</h1><p class="lead">Agreed scores only. Each head's latest session, against the standard of 7 on every pillar.</p></div></div>
+ return `<div class="page-h"><div><p class="eyebrow">${mName(NOW)} 2026 · ${quarter(NOW)} (Sep to Nov)</p><h1>The team this month</h1><p class="lead">Agreed scores only. Each head's latest session, against the standard of 7 on every pillar. Scores are for development and are not linked to pay or commission.</p></div></div>
  <div class="stats"><div class="card stat"><small class="eyebrow">Team's weakest pillar</small><b>${P[wi].name}</b><p>Team average ${avg[wi].toFixed(1)}. ${lowOn} of ${withData.length} heads are below standard on it.</p></div>
   <div class="card stat"><small class="eyebrow">Sessions this month</small><b class="num">${done} of ${hs.length}</b><p>${hs.filter(h=>status(h).k==='ready').length} ready to reveal. ${hs.filter(h=>!h.cur.selfAt).length} still to self-score.</p></div>
   <div class="card stat"><small class="eyebrow">Below standard</small><b class="num">${low} of ${withData.length}</b><p>Heads with at least one pillar under 7 at their last session.</p></div></div>
@@ -758,9 +759,9 @@ function vSummary(){
  <div class="sheetwrap"><article class="sheet">
   <div class="sh-top"><div><p class="eyebrow">SCCU Group · Leadership Pillars</p><p class="sh-name">${h.name}</p><p class="muted" style="font-size:14px;margin-top:6px">${h.dept} · Session with James Pease · ${fDateL(c.sessionDate)}</p></div><div style="text-align:right"><p class="eyebrow">Session summary</p><p style="font-family:var(--display);font-weight:700;font-size:20px;margin-top:4px">${mName(NOW)} 2026</p><span class="chip ok" style="margin-top:8px">Integrity: pass</span></div></div>
   <div class="sh-grid"><div>${radar(ag,pv?pv.ag:null,{size:300,id:'s',tight:true})}</div>
-   <table class="sh-t"><thead><tr><th>Pillar</th><th>You</th><th>James</th><th>Agreed</th><th>Since ${pv?mShort(pv.m):'last'}</th></tr></thead><tbody>
+   <table class="sh-t"><thead><tr><th>Pillar</th><th>${first(h)}</th><th>James</th><th>Agreed</th><th>Since ${pv?mShort(pv.m):'last'}</th></tr></thead><tbody>
    ${P.map((p,i)=>{const dl=pv?ag[i]-pv.ag[i]:0;return `<tr><td><b>${p.name}</b>${p.id===c.focus?' <span style="color:var(--pink-ink);font-size:11px;font-weight:800">FOCUS</span>':''}</td><td class="num" style="color:var(--sea);font-weight:800">${c.self[p.id].s}</td><td class="num" style="color:var(--pink-ink);font-weight:800">${c.james[p.id].s}</td><td><span class="ag num">${ag[i]}</span></td><td class="num delta ${dl>0?'up':dl<0?'dn':'eq'}">${!pv?'':dl>0?'▲ '+dl:dl<0?'▼ '+Math.abs(dl):'same'}</td></tr>`}).join('')}</tbody></table></div>
-  <div><p class="eyebrow" style="margin-bottom:10px">The evidence we discussed</p><div class="sh-ev">${P.map(p=>`<div><b>${p.name}</b><i class="h">You, ${fDate(c.self[p.id].d)}.</i> ${esc(c.self[p.id].ex)}<br><i class="j">James, ${fDate(c.james[p.id].d)}.</i> ${esc(c.james[p.id].ex)}</div>`).join('')}</div></div>
+  <div><p class="eyebrow" style="margin-bottom:10px">The evidence we discussed</p><div class="sh-ev">${P.map(p=>`<div><b>${p.name}</b><i class="h">${first(h)}, ${fDate(c.self[p.id].d)}.</i> ${esc(c.self[p.id].ex)}<br><i class="j">James, ${fDate(c.james[p.id].d)}.</i> ${esc(c.james[p.id].ex)}</div>`).join('')}</div></div>
   <div class="sh-focus"><div><p class="eyebrow">Focus for the month</p><h3>${fp.name}</h3><p>${esc(asgText(h))}</p><p style="margin-top:10px;color:#fff;font-weight:700">Due ${fDateL(c.due)}</p></div></div>
   <div class="sh-foot"><span>A score is where you were this month, based on what happened this month. Next month starts again, and opens with this assignment.</span><span style="white-space:nowrap">The dotted line is the standard</span></div>
  </article></div>`;
@@ -802,7 +803,7 @@ document.addEventListener('input',e=>{const t=e.target;
 const A={
  menu(){ui.menu=!ui.menu},
  role(d){S.role=d.id;ui.menu=false;ui.mopen=null;if(S.heads[d.id]){S.headId=d.id}location.hash=routes()[0][0]},
- reset(){S=seed();ui={menu:false,modal:null,open:null,mopen:null};location.hash='team'},
+ reset(){const jx=S.jx||{};S=seed();S.jx=jx;ui={menu:false,modal:null,open:null,mopen:null};location.hash='team'},
  modal(d){ui.modal=d.id}, close(d,el,e){if(e.target.closest('.dlg')&&!e.target.closest('[data-a="close"]'))return false;ui.modal=null},
  mopen(d){ui.mopen=d.id||null;window.scrollTo(0,0)},
  'ss-go'(d){const h=me(),n=+d.id;h.cur.step=Math.max(-1,Math.min(6,n));window.scrollTo(0,0)},
