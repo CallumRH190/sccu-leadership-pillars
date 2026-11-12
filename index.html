@@ -653,7 +653,7 @@ function vSession(){
  let body='';
  if(st==='score'){
   body=`<div class="hidden-note"><span class="lockic">🔒</span><span>${c.selfAt?`${first(h)} submitted on ${fDate(c.selfAt)}. Those scores stay hidden until yours are locked.`:`${first(h)} hasn't self-scored yet. You can still enter yours. Nothing is revealed until both sets are in.`}</span></div>
-  <div style="display:flex;justify-content:space-between;gap:16px;align-items:baseline;flex-wrap:wrap;margin:22px 0 4px"><h2 style="font-size:24px">Your scores for ${first(h)}</h2>${h.id==='tom'?'<button class="link" data-a="j-fill">Fill sample scores (demo only)</button>':''}</div>
+  <div style="display:flex;justify-content:space-between;gap:16px;align-items:baseline;flex-wrap:wrap;margin:22px 0 4px"><h2 style="font-size:24px">Your scores for ${first(h)}</h2>${h.id==='tom'?'<button class="btn ghost sm" data-a="j-fill">Fill sample scores (demo only)</button>':''}</div>
   <p class="muted">Where was ${first(h)} this month? One dated example for each. Tick overdone if you saw too much of a pillar.</p>
   ${P.map(p=>{const e=c.james[p.id]||{};return `<div class="jrow" data-slwrap><div><span class="o">${p.opp} to</span><h3>${p.name}</h3><label class="chk"><input type="checkbox" id="ov-${p.id}" data-over="${p.id}" ${e.over?'checked':''}>Overdone</label><p class="fakeline" data-fake style="display:${e.over?'block':'none'}">Looks like it but isn't: ${esc(p.fake).toLowerCase()}.</p></div>
    <div>${slider('james',h.id,p.id,e.s,true)}<div class="${ancCls(e.s)}" data-anchor>${e.s?anchorHTML(p,e.s):'<p class="anc-empty">Set a score to see the description.</p>'}</div>
