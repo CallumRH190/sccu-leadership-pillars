@@ -573,7 +573,7 @@ function modal(){
  <h3>One example for every score</h3><p>Every score needs one real thing that happened, with a date. No example, no score. That goes for strong scores as much as low ones.</p>
  <h3>One case, one pillar</h3><p>When something happens, it counts on one pillar only. Pick the one that fits best. One bad day should never cost you three scores.</p>
  <h3>The gap is the conversation</h3><p>Your number and James's sit side by side. They are never averaged. Where they're furthest apart is where you start talking. Sometimes James will have you higher than you have yourself. You agree the score together in the room.</p>
- <h3>What the scores are for</h3><p>Development. They are not linked to pay or commission. You see your own scores. James and Scott see every head's.</p>
+ <h3>Who sees your scores</h3><p>You see your own. James and Scott see every head's.</p>
  <h3>One focus, one assignment</h3><p>You leave with one pillar to work on and one real task to do in the job before next month. Next month opens with how it went.</p>
  <div class="dlg-x"><button class="btn" data-a="close">Close</button></div></div></div>`;
  return '';
@@ -616,7 +616,7 @@ function vSelf(){
  if(c.step<0){const fresh=!h.hist.length;
   return `<div class="intro"><p class="eyebrow">${mName(NOW)} 2026 · Self-score</p><h1>${fresh?`Welcome, ${first(h)}. This is your first one.`:`Where were you this month, ${first(h)}?`}</h1>
   <p class="muted" style="font-size:18px">${fresh?'Once a month you score yourself on six pillars, James scores you, and the two of you compare. It takes about ten minutes.':'Six pillars. About ten minutes. Score what happened this month.'}</p>
-  <ul><li><b>Your score is this month.</b>A hard month can drop a number and a good month brings it back. Nobody is a 5.</li><li><b>One example for every score.</b>One real thing that happened, with a date. No example, no score.</li><li><b>James can't see yours until his are in.</b>And you can't see his until you've submitted.</li><li><b>This is for your development.</b>Scores are not linked to pay or commission. You see your own. James and Scott see every head's.</li></ul>
+  <ul><li><b>Your score is this month.</b>A hard month can drop a number and a good month brings it back. Nobody is a 5.</li><li><b>One example for every score.</b>One real thing that happened, with a date. No example, no score.</li><li><b>James can't see yours until his are in.</b>And you can't see his until you've submitted.</li><li><b>This is for your development.</b>You see your own scores. James and Scott see every head's.</li></ul>
   ${last&&last.asg?`<div class="card" style="margin-bottom:28px"><p class="eyebrow">Your assignment from ${mName(last.m)}</p><p style="margin-top:8px">${esc(last.asg)}</p><p class="hint" style="margin-top:8px">The session opens with how this went. Have your example ready.</p></div>`:''}
   <div class="snav" style="justify-content:flex-start;margin-top:0"><button class="btn" data-a="ss-go" data-id="0">Start scoring</button><button class="btn ghost" data-a="modal" data-id="how">How it works</button></div></div>`}
  const tabs=`<div class="ptabs">${P.map((p,i)=>`<button data-a="ss-go" data-id="${i}" class="${i===c.step?'on':''} ${full(c.self[p.id])?'done':''}">${p.name}</button>`).join('')}<button data-a="ss-go" data-id="6" class="${c.step===6?'on':''}">Review</button></div>`;
@@ -716,7 +716,7 @@ function vTeam(){
  const act=h=>{const s=status(h);if(S.role!=='james')return `<button class="btn ghost sm" data-a="prof" data-id="${h.id}">Profile</button>`;
   const l={done:'Summary',live:'Continue',ready:'Reveal',score:'Score now',wait:'Open',none:'Score now'}[s.k];
   return `<button class="btn ${s.k==='ready'||s.k==='live'?'':'ghost'} sm" data-a="${s.k==='done'?'sum':'sess'}" data-id="${h.id}">${l}</button>`};
- return `<div class="page-h"><div><p class="eyebrow">${mName(NOW)} 2026 · ${quarter(NOW)} (Sep to Nov)</p><h1>The team this month</h1><p class="lead">Agreed scores only. Each head's latest session, against the standard of 7 on every pillar. Scores are for development and are not linked to pay or commission.</p></div></div>
+ return `<div class="page-h"><div><p class="eyebrow">${mName(NOW)} 2026 · ${quarter(NOW)} (Sep to Nov)</p><h1>The team this month</h1><p class="lead">Agreed scores only. Each head's latest session, against the standard of 7 on every pillar.</p></div></div>
  <div class="stats"><div class="card stat"><small class="eyebrow">Team's weakest pillar</small><b>${P[wi].name}</b><p>Team average ${avg[wi].toFixed(1)}. ${lowOn} of ${withData.length} heads are below standard on it.</p></div>
   <div class="card stat"><small class="eyebrow">Sessions this month</small><b class="num">${done} of ${hs.length}</b><p>${hs.filter(h=>status(h).k==='ready').length} ready to reveal. ${hs.filter(h=>!h.cur.selfAt).length} still to self-score.</p></div>
   <div class="card stat"><small class="eyebrow">Below standard</small><b class="num">${low} of ${withData.length}</b><p>Heads with at least one pillar under 7 at their last session.</p></div></div>
