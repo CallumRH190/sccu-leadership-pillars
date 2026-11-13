@@ -316,8 +316,11 @@ table.team{width:100%;border-collapse:collapse;min-width:860px}
 </head>
 <body>
 <div id="app"></div>
+<input type="file" id="rf" accept=".json,application/json" hidden>
 <script>
 "use strict";
+/*FLAGS*/
+const HEADMODE=TRIAL&&/[?&]who=head\b/.test(location.search);
 /* ---------- content (word for word from the approved content pack) ---------- */
 const P=[
 {id:'resilience',name:'Resilience',opp:'Reactivity',
@@ -424,7 +427,9 @@ const LINKS=[
  {a:'resilience',b:'ingenuity',first:'resilience',t:"Ingenuity depends on Resilience. You can't see options while you're thrown by the problem. Steady the state first, then ask for options."},
  {a:'assertiveness',b:'decisiveness',first:'assertiveness',t:"Assertiveness feeds Decisiveness. People who avoid the conversation tend to avoid the decision. Start with the conversation they're putting off."}];
 const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
-const NOW='2026-11',TODAY=(()=>{const d=new Date(),s=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');return s<'2026-11-11'?'2026-11-11':s>'2026-11-30'?'2026-11-30':s})(),STD=7;
+const _iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const NOW=TRIAL?_iso(new Date()).slice(0,7):'2026-11',TODAY=TRIAL?_iso(new Date()):(()=>{const d=new Date(),s=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');return s<'2026-11-11'?'2026-11-11':s>'2026-11-30'?'2026-11-30':s})(),STD=7;
+const YEAR=NOW.slice(0,4),MIND=TRIAL?_iso(new Date(Date.now()-45*864e5)):'2026-10-12',QL={Q1:'Mar to May',Q2:'Jun to Aug',Q3:'Sep to Nov',Q4:'Dec to Feb'};
 const mName=m=>MN[+m.slice(5,7)-1], mShort=m=>mName(m).slice(0,3);
 const fDate=d=>d?(+d.slice(8,10))+' '+MN[+d.slice(5,7)-1].slice(0,3):'';
 const fDateL=d=>d?(+d.slice(8,10))+' '+MN[+d.slice(5,7)-1]+' '+d.slice(0,4):'';
@@ -432,10 +437,12 @@ const quarter=m=>{const n=+m.slice(5,7);return n>=3&&n<=5?'Q1':n>=6&&n<=8?'Q2':n
 
 /* ---------- sample data: fictional heads, fictional departments ---------- */
 function E(s,ex,d,over){return {s,ex,d,over:!!over}}
+function mkHead(id,name,dept,hist,cur){return {id,name,dept,ini:name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase(),hist:hist||[],cur:Object.assign({self:{},selfAt:null,james:{},jamesAt:null,revealed:false,agreed:{},focus:null,asg:null,asgOwn:'',due:'',review:null,done:false,sessionDate:null,startedAt:null,endedAt:null,step:-1},cur||{})}}
 function seed(){
- const H=(id,name,dept,hist,cur)=>({id,name,dept,ini:name.split(' ').map(w=>w[0]).join(''),hist,cur:Object.assign({self:{},selfAt:null,james:{},jamesAt:null,revealed:false,agreed:{},focus:null,asg:null,asgOwn:'',due:'',review:null,done:false,sessionDate:null,startedAt:null,endedAt:null,step:-1},cur||{})});
+ const H=mkHead;
  const m=(mo,ag,focus,ai,due)=>({m:'2026-'+mo,ag,focus,asg:focus?P[PI[focus]].asg[ai].t:null,due});
  const map=o=>Object.fromEntries(P.map((p,i)=>[p.id,o[i]]));
+ if(TRIAL)return HEADMODE?{v:1,role:'me',headId:'me',jx:{},seenHow:{},heads:{me:mkHead('me','','',[],{})}}:{v:1,role:'james',headId:null,jx:{},seenHow:{},pending:null,heads:{}};
  return {v:3,role:'james',headId:'tom',jx:{},seenHow:{},heads:{
   priya:H('priya','Priya Nair','Partnerships',[
     m('06',[7,6,7,4,7,8]),m('07',[7,6,7,5,7,8]),m('08',[7,7,7,5,8,8]),m('09',[8,7,7,6,8,8]),m('10',[8,7,8,6,8,9],'assertiveness',0,'2026-11-04')],
@@ -461,8 +468,8 @@ const TOM_SAMPLE=[E(5,'The week the tutors left, the team told me they were keep
 
 /* ---------- state ---------- */
 let S, ui={menu:false,modal:null,open:null,mopen:null};
-const KEY='sccu-pillars-demo-v3';
-function load(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.v===3)return r}catch(e){}return seed()}
+const KEY=TRIAL?(HEADMODE?'sccu-pillars-trial-head-v1':'sccu-pillars-trial-v1'):'sccu-pillars-demo-v3';
+function load(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.v===(TRIAL?1:3)&&(!TRIAL||HEADMODE===!!(r.heads&&r.heads.me)))return r}catch(e){}return seed()}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 S=load();
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -535,14 +542,62 @@ function spark(vals){
  const d=vals.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
  return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true"><line x1="0" x2="${w}" y1="${y(STD)}" y2="${y(STD)}" stroke="rgba(255,255,255,.3)" stroke-dasharray="2 4"/>${n>1?`<path d="${d} L${x(n-1)} ${h} L${x(0)} ${h} Z" fill="rgba(195,46,129,.16)"/><path d="${d}" fill="none" stroke="#c32e81" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`:''}<circle cx="${x(n-1)}" cy="${y(vals[n-1])}" r="4" fill="#fff"/></svg>`}
 
+
+/* ---------- trial: one real session, no logins ---------- */
+const curH=()=>S.heads[S.headId]||Object.values(S.heads)[0]||null;
+const pageBase=()=>location.href.split(/[?#]/)[0];
+const b64e=s=>btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const b64d=s=>{s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return decodeURIComponent(escape(atob(s)))};
+function copyText(v){try{if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(v).catch(()=>{});return}}catch(e){}const t=document.createElement('textarea');t.value=v;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();try{document.execCommand('copy')}catch(e){}t.remove()}
+function makeCode(h){return 'LP1.'+b64e(JSON.stringify({v:1,n:h.name.trim(),m:NOW,at:h.cur.selfAt,s:P.map(p=>{const e=h.cur.self[p.id];return [e.s,e.ex,e.d]})}))}
+function readCode(raw){try{let t=String(raw||'').trim();const i=t.indexOf('LP1.');if(i<0)return null;t=t.slice(i+4).replace(/\s+/g,'');const o=JSON.parse(b64d(t));
+ if(o.v!==1||!Array.isArray(o.s)||o.s.length!==6)return null;
+ for(const r of o.s){if(!(r[0]>=1&&r[0]<=10)||typeof r[1]!=='string'||!/^\d{4}-\d\d-\d\d$/.test(r[2]))return null}
+ return o}catch(e){return null}}
+function applyCode(o){
+ const hs=Object.values(S.heads);if(!hs.length){S.pending=o;return 'Add the head first. Their scores load as soon as you do.'}
+ const nm=(o.n||'').toLowerCase().split(' ')[0];const h=hs.find(x=>nm&&first(x).toLowerCase()===nm)||curH();
+ if(h.cur.revealed){ui.codeErr=true;return `${first(h)}'s session has already been revealed, so new scores can't be loaded.`}
+ P.forEach((p,i)=>h.cur.self[p.id]={s:+o.s[i][0],ex:o.s[i][1],d:o.s[i][2],over:false});h.cur.selfAt=o.at||TODAY;h.cur.step=6;S.headId=h.id;S.pending=null;ui.codeErr=false;
+ return `${o.n?o.n+"'s":'The'} scores are loaded into ${h.name}'s session. They stay hidden until you reveal both sets.`}
+function setupHTML(){const any=Object.keys(S.heads).length>0;ui.nh=ui.nh||{n:'',d:''};
+ return `<div class="intro"><p class="eyebrow">Trial version${any?' · add a head':''}</p><h1>${any?'Who is the next session with?':'Who is this session with?'}</h1>
+ <p class="muted" style="font-size:18px">${any?'':'This is the trial version. It runs real sessions without logins, and everything you enter stays in this browser on this device. '}Their name is never sent anywhere.</p>
+ <div class="evi" style="margin-top:26px"><div><label class="fl" for="nh-n">Their name</label><input type="text" id="nh-n" data-nh="n" value="${esc(ui.nh.n)}" placeholder="First and last name" autocomplete="off"></div><div><label class="fl" for="nh-d">Department</label><input type="text" id="nh-d" data-nh="d" value="${esc(ui.nh.d)}" placeholder="For example, Futures" autocomplete="off"></div></div>
+ <div class="snav" style="justify-content:flex-start"><button class="btn" data-a="add-head" data-gate="newhead">Add and open the session</button>${any?'<button class="btn ghost" data-a="cancel-add">Cancel</button>':''}<span class="hint" data-hint="newhead"></span></div>
+ ${S.pending?`<div class="hidden-note" style="margin-top:22px"><span class="lockic">🔒</span><span>Scores from ${esc(S.pending.n||'a head')} have arrived. They load as soon as you add them here.</span></div>`:''}</div>`}
+function inviteHTML(h){const c=h.cur,link=pageBase()+'?who=head',f=first(h);
+ return `<div class="card" style="margin:0 0 22px"><p class="eyebrow">${c.selfAt?`${f}'s scores are loaded`:`First, ${f}'s self-score`}</p>
+ ${c.selfAt?`<p style="margin:8px 0 0;color:var(--ink-2)">Loaded and hidden. If ${f} sends a newer link, open it on this device or paste the code below.</p>`
+ :`<p style="margin:8px 0 14px;color:var(--ink-2)">Send ${f} this private link. They score on their own phone or laptop, then send a link back to you. Open that link on this device and their scores load here, hidden until the reveal.</p>
+ <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><input type="text" readonly id="inv" value="${esc(link)}" aria-label="Private scoring link" style="flex:1;min-width:240px"><button class="btn sm" data-a="copy" data-id="inv">${ui.copied==='inv'?'Copied':'Copy the link'}</button></div>`}
+ <label class="fl" for="code" style="margin-top:16px;display:block">${c.selfAt?'Paste a newer code':`Or paste the code ${f} sent you`}</label>
+ <textarea id="code" data-code placeholder="Starts with LP1." style="min-height:56px">${esc(ui.code||'')}</textarea>
+ <div class="snav" style="justify-content:flex-start;margin-top:10px"><button class="btn ghost sm" data-a="load-code">Load the scores</button><span class="hint ${ui.codeErr?'bad':''}">${ui.codeErr?esc(ui.codeMsg||''):''}</span></div></div>`}
+function sendHTML(h){const code=makeCode(h),link=pageBase()+'#code='+code;
+ return `<div class="card" style="margin:22px 0"><p class="eyebrow">Last step · send it to James</p><p style="margin:8px 0 14px;color:var(--ink-2)">Send James the link below. Your numbers stay hidden on his screen until he has locked his own and you reveal both sets together.</p>
+ <div class="snav" style="justify-content:flex-start;margin-top:0"><button class="btn" data-a="share">${ui.copied==='share'?'Copied. Now paste it to James':'Send to James'}</button><button class="btn ghost" data-a="copy" data-id="sendcode">${ui.copied==='sendcode'?'Copied':'Copy the code only'}</button></div>
+ <textarea id="sendlink" readonly style="min-height:70px;margin-top:14px;font-size:12px;word-break:break-all" aria-label="Your link for James">${esc(link)}</textarea><textarea id="sendcode" readonly hidden>${esc(code)}</textarea>
+ <p class="hint" style="margin-top:8px">Nothing has left this device yet. James only gets your scores when you send him this.</p>
+ <button class="link" data-a="unlock" style="margin-top:12px">I need to change something first</button></div>`}
+function headIntro(h){return `<div class="intro"><p class="eyebrow">${mName(NOW)} ${YEAR} · Self-score</p><h1>Welcome. This is your first one.</h1>
+ <p class="muted" style="font-size:18px">Once a month you score yourself on six pillars, James scores you, and the two of you compare. It takes about ten minutes.</p>
+ <ul><li><b>Your score is this month.</b>A hard month can drop a number and a good month brings it back. Nobody is a 5.</li><li><b>One example for every score.</b>One real thing that happened, with a date. No example, no score.</li><li><b>James can't see yours until you sit down together.</b>When you finish, you send him a link. Your numbers stay hidden on his screen until his own are locked.</li><li><b>Nothing leaves this device until you send it.</b>Your answers save in this browser as you go, so you can stop and come back.</li></ul>
+ <div style="max-width:340px;margin-bottom:26px"><label class="fl" for="hn">Your first name</label><input type="text" id="hn" data-hn value="${esc(h.name)}" autocomplete="given-name"></div>
+ <div class="snav" style="justify-content:flex-start;margin-top:0"><button class="btn" data-a="ss-go" data-id="0" data-gate="hname">Start scoring</button><button class="btn ghost" data-a="modal" data-id="how">How it works</button><span class="hint" data-hint="hname"></span></div></div>`}
+
 /* ---------- shell ---------- */
-function routes(){return S.role==='james'?[['team','Team'],['session','Session'],['profile','Profiles'],['model','The Model']]:S.role==='scott'?[['team','Team'],['profile','Profiles'],['model','The Model']]:[['self-score','Self-score'],['profile','My profile'],['summary','Session summary'],['model','The Model']]}
+function routes(){if(HEADMODE)return [['self-score','My scores'],['model','The Model']];return S.role==='james'?[['team','Team'],['session','Session'],['profile','Profiles'],['model','The Model']]:S.role==='scott'?[['team','Team'],['profile','Profiles'],['model','The Model']]:[['self-score','Self-score'],['profile','My profile'],['summary','Session summary'],['model','The Model']]}
 function route(){const r=(location.hash||'').slice(1);const ok=routes().map(x=>x[0]).concat(S.role==='james'?['summary']:[]);return ok.includes(r)?r:routes()[0][0]}
 function whoHTML(){
- const r=S.role, n=r==='james'?'James Pease':r==='scott'?'Scott Riddell':me().name, t=r==='james'?'COO':r==='scott'?'CEO':'Head of '+me().dept, a=r==='james'?'j':r==='scott'?'s':'h', ini=n.split(' ').map(w=>w[0]).join('');
+ const r=S.role, n=r==='james'?'James Pease':r==='scott'?'Scott Riddell':(me().name.trim()||'Your scoring page'), t=r==='james'?'COO':r==='scott'?'CEO':'Head of '+me().dept, a=r==='james'?'j':r==='scott'?'s':'h';
+ const ini=HEADMODE?((me().name.trim()[0]||'·').toUpperCase()):n.split(' ').map(w=>w[0]).join('');
  const item=(id,name,sub,cls)=>`<button data-a="role" data-id="${id}" class="${S.role===id?'on':''}"><i class="av ${cls}" style="font-style:normal">${name.split(' ').map(w=>w[0]).join('')}</i><span>${name}<small>${sub}</small></span></button>`;
- return `<button class="who" data-a="menu" aria-expanded="${ui.menu}"><i class="av ${a}" style="font-style:normal">${ini}</i><span>${n}<small>Viewing as ${t}</small></span></button>
- ${ui.menu?`<div class="menu"><p class="eyebrow">View the tool as</p>${item('james','James Pease','COO. Runs the sessions','j')}${item('scott','Scott Riddell','CEO. Sees the team picture','s')}<hr><p class="eyebrow">Sample heads</p>${Object.values(S.heads).map(h=>item(h.id,h.name,h.dept+'. '+status(h).t,'h')).join('')}<hr><button data-a="reset"><span>Reset the demo<small>Puts every sample head back to the start</small></span></button></div>`:''}`;
+ const clr=ui.confirm==='clear';
+ const menu=!ui.menu?'':HEADMODE?`<div class="menu"><button data-a="clear"><span>${clr?'Click again to clear everything':'Start again'}<small>Clears your answers on this device</small></span></button></div>`
+  :TRIAL?`<div class="menu"><p class="eyebrow">View the tool as</p>${item('james','James Pease','COO. Runs the sessions','j')}${item('scott','Scott Riddell','CEO. Sees the team picture','s')}<hr><button data-a="new-head"><span>Add a head<small>Set up another session</small></span></button><button data-a="backup"><span>Download a backup file<small>Saves everything on this device to a file</small></span></button><button data-a="restore"><span>Restore from a backup<small>Loads a backup file you saved earlier</small></span></button><hr><button data-a="clear"><span>${clr?'Click again to clear everything':'Clear the trial'}<small>Removes every head and score from this device</small></span></button></div>`
+  :`<div class="menu"><p class="eyebrow">View the tool as</p>${item('james','James Pease','COO. Runs the sessions','j')}${item('scott','Scott Riddell','CEO. Sees the team picture','s')}<hr><p class="eyebrow">Sample heads</p>${Object.values(S.heads).map(h=>item(h.id,h.name,h.dept+'. '+status(h).t,'h')).join('')}<hr><button data-a="reset"><span>Reset the demo<small>Puts every sample head back to the start</small></span></button></div>`;
+ return `<button class="who" data-a="menu" aria-expanded="${ui.menu}"><i class="av ${a}" style="font-style:normal">${ini}</i><span>${esc(n)}<small>${HEADMODE?'Private to you':'Viewing as '+t}</small></span></button>${menu}`;
 }
 function render(){
  const r=route();
@@ -550,7 +605,7 @@ function render(){
  document.getElementById('app').innerHTML=`<header class="top"><div class="top-in">
   <a class="brand" href="#${routes()[0][0]}"><small>SCCU GROUP</small><b>Leadership Pillars</b></a>
   <nav class="nav" aria-label="Views">${routes().map(([k,l])=>`<a href="#${k}" class="${k===r?'on':''}">${l}</a>`).join('')}</nav>
-  <div class="top-r"><span class="pill">Sample data</span>${whoHTML()}</div></div></header>
+  <div class="top-r"><span class="pill">${TRIAL?'Trial':'Sample data'}</span>${whoHTML()}</div></div></header>
   <main>${views[r]()}</main>${modal()}`;
  gates(); animRadar();
  if(document.querySelector('.rv.pre[data-auto]'))requestAnimationFrame(()=>requestAnimationFrame(()=>{const e=document.querySelector('.rv');if(e){e.classList.remove('pre');e.classList.add('go');e.querySelectorAll('[data-to]').forEach(m=>m.style.left=m.dataset.to+'%')}}));
@@ -583,7 +638,7 @@ function vModel(){
    <div class="tl">${p.traits.map(t=>`<div><b>${t.n}</b><span>${esc(t.d)}</span></div>`).join('')}</div>
    <div class="fake"><p class="eyebrow">Looks like it but isn't</p><p>${esc(p.fake)}.</p></div>
    <div class="box"><p class="eyebrow">Worked example</p><p>${esc(p.ex.s)}</p><p>${esc(p.ex.r)}</p></div>
-   <div class="box"><p class="eyebrow">James's example</p>${S.role==='james'?`<p><textarea id="jx-${p.id}" data-jx="${p.id}" placeholder="Write the example you use when you explain ${p.name} to a head.">${esc(jx)}</textarea></p><p class="hint">Saves as you type, and stays when you reset the demo. Heads see this on the pillar page.</p>`:jx?`<p>${esc(jx)}</p>`:`<p class="empty">James will add his own example here.</p>`}</div>
+   <div class="box"><p class="eyebrow">James's example</p>${S.role==='james'?`<p><textarea id="jx-${p.id}" data-jx="${p.id}" placeholder="Write the example you use when you explain ${p.name} to a head.">${esc(jx)}</textarea></p><p class="hint">${TRIAL?'Saves as you type on this device. In the full version, heads see it on this page.':'Saves as you type, and stays when you reset the demo. Heads see this on the pillar page.'}</p>`:jx?`<p>${esc(jx)}</p>`:`<p class="empty">James will add his own example here.</p>`}</div>
   </div><div>
    <p class="eyebrow" style="margin-bottom:14px">What it looks like</p>
    <div class="ladder">${[9,7,5,3].map(n=>`<div class="rung"><span class="n">${n}</span><div>${n===7?'<small>The standard for a head at SCCU</small>':''}<p>${esc(p.anc[n])}</p></div></div>`).join('')}</div>
@@ -602,12 +657,13 @@ function selfMissing(h,pid){const e=h.cur.self[pid]||{};const d=dupOf(h,pid);
  if(!e.d)return 'Add the date it happened.';return ''}
 function vSelf(){
  const h=me(),c=h.cur,last=h.hist[h.hist.length-1];
- if(c.done)return `<div class="intro"><p class="eyebrow">${mName(NOW)} 2026</p><h1>This month's session is done.</h1><p class="muted" style="font-size:18px">You and James agreed your scores on ${fDateL(c.sessionDate)}. Self-scoring opens again next month.</p><div class="snav" style="justify-content:flex-start"><a class="btn" href="#summary">Open the session summary</a><a class="btn ghost" href="#profile">See my profile</a></div></div>`;
- if(c.selfAt)return `<div class="stage"><p class="eyebrow">${mName(NOW)} 2026 · Submitted ${fDate(c.selfAt)}</p><h1 style="font-size:clamp(28px,3.6vw,42px);margin:12px 0 10px">Your scores are in and locked.</h1>
-  <div class="hidden-note" style="margin:22px 0"><span class="lockic">🔒</span><span>${c.jamesAt?"James's scores are in too. You'll both see them together in the session.":"James hasn't scored yet. His scores stay hidden from you, and yours from him, until you sit down together."}</span></div>
+ if(HEADMODE&&c.step<0&&!c.selfAt)return headIntro(h);
+ if(c.done)return `<div class="intro"><p class="eyebrow">${mName(NOW)} ${YEAR}</p><h1>This month's session is done.</h1><p class="muted" style="font-size:18px">You and James agreed your scores on ${fDateL(c.sessionDate)}. Self-scoring opens again next month.</p><div class="snav" style="justify-content:flex-start"><a class="btn" href="#summary">Open the session summary</a><a class="btn ghost" href="#profile">See my profile</a></div></div>`;
+ if(c.selfAt)return `<div class="stage"><p class="eyebrow">${mName(NOW)} ${YEAR} · Submitted ${fDate(c.selfAt)}</p><h1 style="font-size:clamp(28px,3.6vw,42px);margin:12px 0 10px">Your scores are in and locked.</h1>
+  ${HEADMODE?sendHTML(h):`<div class="hidden-note" style="margin:22px 0"><span class="lockic">🔒</span><span>${c.jamesAt?"James's scores are in too. You'll both see them together in the session.":"James hasn't scored yet. His scores stay hidden from you, and yours from him, until you sit down together."}</span></div>`}
   ${P.map(p=>{const e=c.self[p.id];return `<div class="rrow"><div><small>${p.opp} to</small><h3>${p.name}</h3></div><div>${mini([{v:e.s,c:'h',l:e.s}])}<p>${esc(e.ex)} <span class="dim">${fDate(e.d)}</span></p></div></div>`}).join('')}</div>`;
  if(c.step<0){const fresh=!h.hist.length;
-  return `<div class="intro"><p class="eyebrow">${mName(NOW)} 2026 · Self-score</p><h1>${fresh?`Welcome, ${first(h)}. This is your first one.`:`Where were you this month, ${first(h)}?`}</h1>
+  return `<div class="intro"><p class="eyebrow">${mName(NOW)} ${YEAR} · Self-score</p><h1>${fresh?`Welcome, ${first(h)}. This is your first one.`:`Where were you this month, ${first(h)}?`}</h1>
   <p class="muted" style="font-size:18px">${fresh?'Once a month you score yourself on six pillars, James scores you, and the two of you compare. It takes about ten minutes.':'Six pillars. About ten minutes. Score what happened this month.'}</p>
   <ul><li><b>Your score is this month.</b>A hard month can drop a number and a good month brings it back. Nobody is a 5.</li><li><b>One example for every score.</b>One real thing that happened, with a date. No example, no score.</li><li><b>James can't see yours until his are in.</b>And you can't see his until you've submitted.</li><li><b>This is for your development.</b>You see your own scores. James and Scott see every head's.</li></ul>
   ${last&&last.asg?`<div class="card" style="margin-bottom:28px"><p class="eyebrow">Your assignment from ${mName(last.m)}</p><p style="margin-top:8px">${esc(last.asg)}</p><p class="hint" style="margin-top:8px">The session opens with how this went. Have your example ready.</p></div>`:''}
@@ -625,7 +681,7 @@ function vSelf(){
   ${slider('self',h.id,p.id,v)}
   <div class="${ancCls(v)}" data-anchor aria-live="polite">${anchorHTML(p,v)}</div>
   <div class="evi"><div><label class="fl" for="ex-${p.id}">What happened this month that puts you here?</label><textarea id="ex-${p.id}" data-f="self" data-h="${h.id}" data-p="${p.id}" data-k="ex" placeholder="One real thing that happened. What you did, and what came of it.">${esc(e.ex||'')}</textarea></div>
-   <div><label class="fl" for="d-${p.id}">When</label><input type="date" id="d-${p.id}" min="2026-10-12" max="${TODAY}" value="${e.d||''}" data-f="self" data-h="${h.id}" data-p="${p.id}" data-k="d"></div>
+   <div><label class="fl" for="d-${p.id}">When</label><input type="date" id="d-${p.id}" min="${MIND}" max="${TODAY}" value="${e.d||''}" data-f="self" data-h="${h.id}" data-p="${p.id}" data-k="d"></div>
    <div class="full"><span class="hint">One example, one pillar. Use it here only.</span><button class="link" data-a="modal" data-id="chooser">Not sure which pillar it belongs to?</button></div></div>
   <div class="snav"><button class="btn ghost" data-a="ss-go" data-id="${c.step-1}">Back</button><span class="hint" data-hint="self"></span><button class="btn" data-a="ss-go" data-id="${c.step+1}" data-gate="self" data-p="${p.id}">${c.step<5?'Next: '+P[c.step+1].name:'Review all six'}</button></div></div>`;
 }
@@ -640,20 +696,21 @@ function rail(h,st){
  return `<aside class="rail">${steps.map((s,i)=>`<div class="st ${done(i)?'done':''} ${i===idx&&!done(i)||(!c.selfAt&&i===0&&st==='wait')?'on':''}"><i>${done(i)?'✓':i+1}</i>${s}</div>`).join('')}
  <div class="clock"><p class="eyebrow">Session clock</p><b class="num" data-clock data-s="${c.startedAt||''}" data-e="${c.endedAt||''}">${c.startedAt?'':'00:00'}</b><span class="hint">Aim for about 20 minutes</span></div></aside>`}
 function vSession(){
- const h=S.heads[S.headId]||S.heads.tom,c=h.cur,st=stageOf(h);
+ if(TRIAL&&!curH())return setupHTML();
+ const h=curH(),c=h.cur,st=stageOf(h);
  const pick=`<div class="hpick">${Object.values(S.heads).map(x=>`<button data-a="head" data-id="${x.id}" class="${x.id===h.id?'on':''}"><i class="av h" style="font-style:normal">${x.ini}</i>${x.name} <span class="dim" style="font-weight:600">· ${status(x).t}</span></button>`).join('')}</div>`;
  const head=`<div class="page-h" style="margin-bottom:22px"><div><p class="eyebrow">${mName(NOW)} session · ${h.dept}</p><h1>${h.name}</h1></div><div class="legend"><span><i style="background:var(--sea)"></i>${first(h)}</span><span><i style="background:var(--pink)"></i>You</span><span><i style="background:var(--grad)"></i>Agreed</span>${c.revealed?'<span><i style="width:2px;height:14px;border-radius:0;background:rgba(255,255,255,.6)"></i>The standard</span>':''}</div></div>`;
  let body='';
  if(st==='score'){
-  body=`<div class="hidden-note"><span class="lockic">🔒</span><span>${c.selfAt?`${first(h)} submitted on ${fDate(c.selfAt)}. Those scores stay hidden until yours are locked.`:`${first(h)} hasn't self-scored yet. You can still enter yours. Nothing is revealed until both sets are in.`}</span></div>
+  body=`${TRIAL?inviteHTML(h):''}<div class="hidden-note"><span class="lockic">🔒</span><span>${c.selfAt?`${first(h)} submitted on ${fDate(c.selfAt)}. Those scores stay hidden until yours are locked.`:`${first(h)} hasn't self-scored yet. You can still enter yours. Nothing is revealed until both sets are in.`}</span></div>
   <div style="display:flex;justify-content:space-between;gap:16px;align-items:baseline;flex-wrap:wrap;margin:22px 0 4px"><h2 style="font-size:24px">Your scores for ${first(h)}</h2>${h.id==='tom'?'<button class="btn ghost sm" data-a="j-fill">Fill sample scores (demo only)</button>':''}</div>
   <p class="muted">Where was ${first(h)} this month? One dated example for each. Tick overdone if you saw too much of a pillar.</p>
   ${P.map(p=>{const e=c.james[p.id]||{};return `<div class="jrow" data-slwrap><div><span class="o">${p.opp} to</span><h3>${p.name}</h3><label class="chk"><input type="checkbox" id="ov-${p.id}" data-over="${p.id}" ${e.over?'checked':''}>Overdone</label><p class="fakeline" data-fake style="display:${e.over?'block':'none'}">Looks like it but isn't: ${esc(p.fake).toLowerCase()}.</p></div>
    <div>${slider('james',h.id,p.id,e.s,true)}<div class="${ancCls(e.s)}" data-anchor>${e.s?anchorHTML(p,e.s):'<p class="anc-empty">Set a score to see the description.</p>'}</div>
-   <div class="evi"><div><textarea id="jex-${p.id}" aria-label="Your example for ${p.name}" data-f="james" data-h="${h.id}" data-p="${p.id}" data-k="ex" placeholder="What did you see? One real example." style="min-height:64px">${esc(e.ex||'')}</textarea></div><div><input type="date" id="jd-${p.id}" aria-label="Date of your example for ${p.name}" min="2026-10-12" max="${TODAY}" value="${e.d||''}" data-f="james" data-h="${h.id}" data-p="${p.id}" data-k="d"></div></div></div></div>`}).join('')}
+   <div class="evi"><div><textarea id="jex-${p.id}" aria-label="Your example for ${p.name}" data-f="james" data-h="${h.id}" data-p="${p.id}" data-k="ex" placeholder="What did you see? One real example." style="min-height:64px">${esc(e.ex||'')}</textarea></div><div><input type="date" id="jd-${p.id}" aria-label="Date of your example for ${p.name}" min="${MIND}" max="${TODAY}" value="${e.d||''}" data-f="james" data-h="${h.id}" data-p="${p.id}" data-k="d"></div></div></div></div>`}).join('')}
   <div class="snav"><span class="hint" data-hint="james"></span><button class="btn" data-a="j-lock" data-gate="james">Lock my scores</button></div>`;
  } else if(st==='wait'){
-  body=`<div class="blank"><h2>Your scores are locked.</h2><p>${first(h)} hasn't self-scored yet. The reveal opens as soon as ${first(h)} submits. Nothing is visible to either of you until then.</p><p class="hint">For the demo: switch to ${h.name} from the menu top right, complete the self-score, then come back.</p></div>`;
+  body=`${TRIAL?inviteHTML(h):''}<div class="blank"><h2>Your scores are locked.</h2><p>${TRIAL?`${first(h)}'s scores haven't arrived yet. The reveal opens as soon as they load. Nothing is visible to either of you until then.`:`${first(h)} hasn't self-scored yet. The reveal opens as soon as ${first(h)} submits. Nothing is visible to either of you until then.`}</p>${TRIAL?'':`<p class="hint">For the demo: switch to ${h.name} from the menu top right, complete the self-score, then come back.</p>`}</div>`;
  } else if(st==='reveal'){
   const last=h.hist[h.hist.length-1];
   body=`${last&&last.asg?`<div class="card" style="margin-bottom:16px"><p class="eyebrow">Open with last month · ${P[PI[last.focus]].name}</p><p style="margin:8px 0 4px">${esc(last.asg)}</p><p class="open-line" style="font-size:17px;margin:12px 0">How did the assignment go? What did you do, on what date, and what changed?</p><div class="agree">${[['done','Done'],['part','Partly'],['no','Not done']].map(([k,l])=>`<button style="width:auto;padding:0 16px" class="${c.review===k?'on':''}" data-a="review" data-id="${k}">${l}</button>`).join('')}</div></div>`:''}
@@ -694,36 +751,38 @@ function vSession(){
  } else {
   body=`<div class="blank"><h2>This session is complete.</h2><p>Agreed on ${fDateL(c.sessionDate)}. Focus for the month: ${P[PI[c.focus]].name}. Next month opens with the assignment.</p><div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center"><a class="btn" href="#summary">Open the session summary</a><a class="btn ghost" href="#profile">See the profile</a></div></div>`;
  }
- return pick+`<div class="sess">${rail(h,st)}<div>${head}${body}</div></div>`;
+ return pick+`<div class="sess">${rail(h,st)}<div>${head}${TRIAL&&ui.codeMsg&&!ui.codeErr?`<div class="hidden-note" style="margin-bottom:22px"><span class="lockic">🔒</span><span>${esc(ui.codeMsg)}</span></div>`:''}${body}</div></div>`;
 }
 function suggest(h){const a=h.cur.agreed;const l=LINKS.find(l=>a[l.a]<STD&&a[l.b]<STD);if(l)return l.first;return P.slice().sort((x,y)=>a[x.id]-a[y.id]||gap(h,y)-gap(h,x))[0].id}
 function finishMissing(h){const c=h.cur;if(!c.focus)return 'Pick one focus pillar.';if(c.asg==null)return 'Pick an assignment or write your own.';if(c.asg==='own'&&c.asgOwn.trim().length<8)return 'Write the assignment.';if(!c.due)return 'Set a due date.';return ''}
 
 /* ---------- Team ---------- */
 function vTeam(){
+ if(TRIAL&&(ui.adding||!Object.keys(S.heads).length))return setupHTML();
  const hs=Object.values(S.heads),rows=hs.map(h=>({h,l:latest(h)}));
  const withData=rows.filter(r=>r.l);
- const avg=P.map((_,i)=>withData.reduce((s,r)=>s+r.l.ag[i],0)/withData.length);
- const wi=avg.indexOf(Math.min(...avg)),done=hs.filter(h=>h.cur.done).length,low=withData.filter(r=>r.l.ag.some(v=>v<STD)).length;
- const lowOn=withData.filter(r=>r.l.ag[wi]<STD).length;
+ const has=withData.length>0,avg=P.map((_,i)=>has?withData.reduce((s,r)=>s+r.l.ag[i],0)/withData.length:0);
+ const wi=has?avg.indexOf(Math.min(...avg)):-1,done=hs.filter(h=>h.cur.done).length,low=withData.filter(r=>r.l.ag.some(v=>v<STD)).length;
+ const lowOn=has?withData.filter(r=>r.l.ag[wi]<STD).length:0;
  const act=h=>{const s=status(h);if(S.role!=='james')return `<button class="btn ghost sm" data-a="prof" data-id="${h.id}">Profile</button>`;
   const l={done:'Summary',live:'Continue',ready:'Reveal',score:'Score now',wait:'Open',none:'Score now'}[s.k];
   return `<button class="btn ${s.k==='ready'||s.k==='live'?'':'ghost'} sm" data-a="${s.k==='done'?'sum':'sess'}" data-id="${h.id}">${l}</button>`};
- return `<div class="page-h"><div><p class="eyebrow">${mName(NOW)} 2026 · ${quarter(NOW)} (Sep to Nov)</p><h1>The team this month</h1><p class="lead">Agreed scores only. Each head's latest session, against the standard of 7 on every pillar.</p></div></div>
- <div class="stats"><div class="card stat"><small class="eyebrow">Team's weakest pillar</small><b>${P[wi].name}</b><p>Team average ${avg[wi].toFixed(1)}. ${lowOn} of ${withData.length} heads are below standard on it.</p></div>
+ return `<div class="page-h"><div><p class="eyebrow">${mName(NOW)} ${YEAR} · ${quarter(NOW)} (${QL[quarter(NOW)]})</p><h1>The team this month</h1><p class="lead">Agreed scores only. Each head's latest session, against the standard of 7 on every pillar.</p></div>${TRIAL&&S.role==='james'?'<button class="btn ghost" data-a="new-head">Add a head</button>':''}</div>
+ <div class="stats"><div class="card stat"><small class="eyebrow">Team's weakest pillar</small>${has?`<b>${P[wi].name}</b><p>Team average ${avg[wi].toFixed(1)}. ${lowOn} of ${withData.length} heads are below standard on it.</p>`:'<b>No scores yet</b><p>The picture builds after the first session.</p>'}</div>
   <div class="card stat"><small class="eyebrow">Sessions this month</small><b class="num">${done} of ${hs.length}</b><p>${hs.filter(h=>status(h).k==='ready').length} ready to reveal. ${hs.filter(h=>!h.cur.selfAt).length} still to self-score.</p></div>
   <div class="card stat"><small class="eyebrow">Below standard</small><b class="num">${low} of ${withData.length}</b><p>Heads with at least one pillar under 7 at their last session.</p></div></div>
  <div class="tw"><table class="team"><thead><tr><th>Head</th>${P.map((p,i)=>`<th class="${i===wi?'weak':''}">${p.name}</th>`).join('')}<th>${mName(NOW)}</th><th></th></tr></thead>
  <tbody>${rows.map(({h,l})=>`<tr><td><div class="hd"><i class="av h" style="font-style:normal">${h.ini}</i><div><b>${h.name}</b><small>${h.dept}${l&&l.m!==NOW?' · scores from '+mName(l.m):''}</small></div></div></td>
   ${l?l.ag.map(v=>`<td><span class="sc num ${v<STD?'low':''}" ${v<STD?'title="Below standard"':''}>${v}</span></td>`).join(''):`<td colspan="6" class="dim" style="text-align:left;padding-left:16px">First session to come. No scores yet.</td>`}
   <td><span class="chip ${status(h).cls}">${status(h).t}</span></td><td class="act">${act(h)}</td></tr>`).join('')}</tbody>
- <tfoot><tr><td>Team average</td>${avg.map((v,i)=>`<td class="num" style="${i===wi?'color:var(--warn)':''}">${v.toFixed(1)}</td>`).join('')}<td></td><td></td></tr></tfoot></table></div>
+ ${has?`<tfoot><tr><td>Team average</td>${avg.map((v,i)=>`<td class="num" style="${i===wi?'color:var(--warn)':''}">${v.toFixed(1)}</td>`).join('')}<td></td><td></td></tr></tfoot>`:''}</table></div>
  <p class="hint" style="margin-top:14px">An outlined score is below the standard of 7. Heads never see this page. James's and Scott's own scores are kept separately and are not shown here.</p>`;
 }
 
 /* ---------- Profile ---------- */
 function vProfile(){
- const own=isHead(),h=own?me():(S.heads[S.headId]||S.heads.tom),l=latest(h),pv=previous(h),ser=series(h),c=h.cur;
+ if(TRIAL&&!isHead()&&!curH())return setupHTML();
+ const own=isHead(),h=own?me():curH(),l=latest(h),pv=previous(h),ser=series(h),c=h.cur;
  const pick=own?'':`<div class="hpick">${Object.values(S.heads).map(x=>`<button data-a="head" data-id="${x.id}" class="${x.id===h.id?'on':''}"><i class="av h" style="font-style:normal">${x.ini}</i>${x.name}</button>`).join('')}</div>`;
  if(!l)return pick+`<div class="page-h"><div><p class="eyebrow">${h.dept}</p><h1>${own?'My profile':h.name}</h1></div></div><div class="blank"><div style="width:220px">${radar(null,null,{size:300,id:'e'})}</div><h2>${own?'Your shape appears after your first session.':'No sessions yet.'}</h2><p>${own?'Self-score first. Then you and James agree six scores together, and this page starts tracking how they move month to month.':`${first(h)} is new. The profile starts after the first session.`}</p>${own?'<a class="btn" href="#self-score">Start my self-score</a>':''}</div>`;
  const d=P.map((_,i)=>pv?l.ag[i]-pv.ag[i]:0),ups=P.filter((_,i)=>d[i]>0),dns=P.filter((_,i)=>d[i]<0);
@@ -732,25 +791,26 @@ function vProfile(){
  const qs=[...new Set(ser.map(x=>quarter(x.m)))].slice(-2);
  const qavg=(q,i)=>{const a=ser.filter(x=>quarter(x.m)===q);return (a.reduce((s,x)=>s+x.ag[i],0)/a.length).toFixed(1)};
  const lastAsg=c.done?{t:asgText(h),f:c.focus,due:c.due}:(h.hist.length&&h.hist[h.hist.length-1].asg?{t:h.hist[h.hist.length-1].asg,f:h.hist[h.hist.length-1].focus,due:h.hist[h.hist.length-1].due}:null);
- return pick+`<div class="page-h" style="margin-bottom:8px"><div><p class="eyebrow">${own?'My profile':h.dept} · ${mName(l.m)} 2026</p><h1>${own?first(h)+', here is your month.':h.name}</h1></div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="chip ok">Integrity: pass</span>${l.m!==NOW?`<span class="chip">${mName(NOW)} session still to come</span>`:''}</div></div>
+ return pick+`<div class="page-h" style="margin-bottom:8px"><div><p class="eyebrow">${own?'My profile':h.dept} · ${mName(l.m)} ${l.m.slice(0,4)}</p><h1>${own?first(h)+', here is your month.':h.name}</h1></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">${TRIAL?'':'<span class="chip ok">Integrity: pass</span>'}${l.m!==NOW?`<span class="chip">${mName(NOW)} session still to come</span>`:''}</div></div>
  <p class="move">${mv}</p>
  <div class="prof"><div>${radar(l.ag,pv?pv.ag:null,{anim:true,id:'p'})}<div class="legend" style="justify-content:center;margin-top:6px"><span><i style="background:var(--grad)"></i>${mName(l.m)}</span>${pv?`<span><i style="background:none;border:1.5px solid rgba(255,255,255,.5)"></i>${mName(pv.m)}</span>`:''}<span><i style="background:none;border:1.5px dotted #fff"></i>The standard</span></div></div>
   <div><div class="prow" style="border:0;padding-bottom:4px"><span class="eyebrow">Pillar</span><span class="eyebrow">${ser.length} month${ser.length>1?'s':''}</span><span></span><span></span><span class="eyebrow" style="text-align:right">${qs.join(' · ')} average</span></div>
   ${P.map((p,i)=>`<div class="prow"><b>${p.name}</b>${spark(ser.map(x=>x.ag[i]))}<span class="big num">${l.ag[i]}</span><span class="delta ${d[i]>0?'up':d[i]<0?'dn':'eq'}">${!pv?'':d[i]>0?'▲ '+d[i]:d[i]<0?'▼ '+Math.abs(d[i]):'same'}</span><span class="q num">${l.ag[i]<STD?`<span class="chip ${own?'sea':'warn'}" style="margin-right:10px">${own?'Focus area':'Below standard'}</span>`:''}${qs.map(q=>qavg(q,i)).join(' · ')}</span></div>`).join('')}</div></div>
  <div class="three"><div class="card"><p class="eyebrow">Open assignment${lastAsg?' · '+P[PI[lastAsg.f]].name:''}</p>${lastAsg?`<p style="margin-top:10px">${esc(lastAsg.t)}</p><p class="hint" style="margin-top:10px">Due ${fDateL(lastAsg.due)}. The next session opens with how it went.</p>`:'<p class="empty" style="margin-top:10px">No assignment yet.</p>'}</div>
-  <div class="card" style="grid-column:span 2"><p class="eyebrow">Results · from the scorecard</p><div class="kpis"><div class="kpi"><b class="num">94%</b><span>Of quarterly target</span></div><div class="kpi"><b class="num">4.6</b><span>Scorecard rating this quarter</span></div><div class="kpi"><b class="num">2 of 3</b><span>Priorities on track</span></div></div><p class="hint" style="margin-top:12px">Sample figures. The live tool pulls these from the existing scorecard. Results sit beside the pillars and are never blended into them.</p></div></div>`;
+  ${TRIAL?`<div class="card" style="grid-column:span 2"><p class="eyebrow">Results · from the scorecard</p><p class="empty" style="margin-top:10px">In the full version, ${first(h)}'s scorecard results sit here. Results sit beside the pillars and are never blended into them.</p></div>`:`<div class="card" style="grid-column:span 2"><p class="eyebrow">Results · from the scorecard</p><div class="kpis"><div class="kpi"><b class="num">94%</b><span>Of quarterly target</span></div><div class="kpi"><b class="num">4.6</b><span>Scorecard rating this quarter</span></div><div class="kpi"><b class="num">2 of 3</b><span>Priorities on track</span></div></div><p class="hint" style="margin-top:12px">Sample figures. The live tool pulls these from the existing scorecard. Results sit beside the pillars and are never blended into them.</p></div>`}</div>`;
 }
 
 /* ---------- Summary ---------- */
 function vSummary(){
- const own=isHead(),h=own?me():(S.heads[S.headId]||S.heads.priya),c=h.cur;
+ if(TRIAL&&!isHead()&&!curH())return setupHTML();
+ const own=isHead(),h=own?me():curH(),c=h.cur;
  const pick=own?'':`<div class="hpick">${Object.values(S.heads).filter(x=>x.cur.done).map(x=>`<button data-a="head" data-id="${x.id}" class="${x.id===h.id?'on':''}"><i class="av h" style="font-style:normal">${x.ini}</i>${x.name}</button>`).join('')}</div>`;
  if(!c.done)return pick+`<div class="blank"><h2>No summary for ${mName(NOW)} yet.</h2><p>${own?'It appears here as soon as you and James finish this month\'s session. One page: your scores, the evidence you discussed, your focus and your assignment.':`${first(h)}'s summary is created when the session is finished.`}</p>${own&&!c.selfAt?'<a class="btn" href="#self-score">Start my self-score</a>':''}</div>`;
  const pv=h.hist[h.hist.length-1],ag=P.map(p=>c.agreed[p.id]),fp=P[PI[c.focus]],canPrint=(()=>{try{return window.self===window.top}catch(e){return false}})();
- return pick+`<div class="sum-act"><span class="hint">One page. ${canPrint?'Save it as a PDF from the print dialog.':'PDF export is switched on in the live tool.'}</span>${canPrint?'<button class="btn sm" data-a="print">Save as PDF</button>':''}</div>
+ return pick+`<div class="sum-act"><span class="hint">One page. ${canPrint?'Save it as a PDF from the print dialog'+(TRIAL?', then send '+first(h)+' a copy.':'.'):'PDF export is switched on in the live tool.'}</span><span style="display:flex;gap:10px">${TRIAL?'<button class="btn ghost sm" data-a="backup">Download a backup</button>':''}${canPrint?'<button class="btn sm" data-a="print">Save as PDF</button>':''}</span></div>
  <div class="sheetwrap"><article class="sheet">
-  <div class="sh-top"><div><p class="eyebrow">SCCU Group · Leadership Pillars</p><p class="sh-name">${h.name}</p><p class="muted" style="font-size:14px;margin-top:6px">${h.dept} · Session with James Pease · ${fDateL(c.sessionDate)}</p></div><div style="text-align:right"><p class="eyebrow">Session summary</p><p style="font-family:var(--display);font-weight:700;font-size:20px;margin-top:4px">${mName(NOW)} 2026</p><span class="chip ok" style="margin-top:8px">Integrity: pass</span></div></div>
+  <div class="sh-top"><div><p class="eyebrow">SCCU Group · Leadership Pillars</p><p class="sh-name">${h.name}</p><p class="muted" style="font-size:14px;margin-top:6px">${h.dept} · Session with James Pease · ${fDateL(c.sessionDate)}</p></div><div style="text-align:right"><p class="eyebrow">Session summary</p><p style="font-family:var(--display);font-weight:700;font-size:20px;margin-top:4px">${mName(NOW)} ${YEAR}</p>${TRIAL?'':'<span class="chip ok" style="margin-top:8px">Integrity: pass</span>'}</div></div>
   <div class="sh-grid"><div>${radar(ag,pv?pv.ag:null,{size:300,id:'s',tight:true})}</div>
    <table class="sh-t"><thead><tr><th>Pillar</th><th>${first(h)}</th><th>James</th><th>Agreed</th><th>Since ${pv?mShort(pv.m):'last'}</th></tr></thead><tbody>
    ${P.map((p,i)=>{const dl=pv?ag[i]-pv.ag[i]:0;return `<tr><td><b>${p.name}</b>${p.id===c.focus?' <span style="color:var(--pink-ink);font-size:11px;font-weight:800">FOCUS</span>':''}</td><td class="num" style="color:var(--sea);font-weight:800">${c.self[p.id].s}</td><td class="num" style="color:var(--pink-ink);font-weight:800">${c.james[p.id].s}</td><td><span class="ag num">${ag[i]}</span></td><td class="num delta ${dl>0?'up':dl<0?'dn':'eq'}">${!pv?'':dl>0?'▲ '+dl:dl<0?'▼ '+Math.abs(dl):'same'}</td></tr>`}).join('')}</tbody></table></div>
@@ -766,6 +826,8 @@ function gates(){
   if(g==='self')m=selfMissing(me(),b.dataset.p);
   if(g==='james'){const h=S.heads[S.headId],n=P.filter(p=>full(h.cur.james[p.id])).length;m=n<6?`${n} of 6 complete. Each needs a score, an example and a date.`:''}
   if(g==='finish')m=finishMissing(S.heads[S.headId]);
+  if(g==='newhead')m=((ui.nh&&ui.nh.n)||'').trim().length<2?'Type their name.':'';
+  if(g==='hname')m=(me().name||'').trim().length<2?'Type your first name to start.':'';
   b.disabled=!!m;const hint=document.querySelector(`[data-hint="${g}"]`);if(hint){hint.textContent=m;hint.classList.toggle('bad',/One case/.test(m))}});
 }
 function setScore(sl,v){
@@ -789,12 +851,25 @@ document.addEventListener('keydown',e=>{
  if(e.key==='Home'){setScore(sl,1);e.preventDefault()} if(e.key==='End'){setScore(sl,10);e.preventDefault()}});
 document.addEventListener('input',e=>{const t=e.target;
  if(t.dataset.f){const o=S.heads[t.dataset.h].cur[t.dataset.f],pid=t.dataset.p;if(!o[pid])o[pid]={s:null,ex:'',d:'',over:false};o[pid][t.dataset.k]=t.value;gates();save()}
+ else if(t.dataset.nh){ui.nh=ui.nh||{n:'',d:''};ui.nh[t.dataset.nh]=t.value;gates()}
+ else if(t.dataset.hn!==undefined){const h=me();h.name=t.value;h.ini=(t.value.trim()[0]||'').toUpperCase();gates();save()}
+ else if(t.dataset.code!==undefined){ui.code=t.value}
  else if(t.dataset.jx){S.jx[t.dataset.jx]=t.value;save()}
  else if(t.dataset.own!==undefined){S.heads[S.headId].cur.asgOwn=t.value;gates();save()}
  else if(t.dataset.due!==undefined){S.heads[S.headId].cur.due=t.value;gates();save()}
  else if(t.dataset.over){const o=S.heads[S.headId].cur.james,pid=t.dataset.over;if(!o[pid])o[pid]={s:null,ex:'',d:'',over:false};o[pid].over=t.checked;t.closest('.jrow').querySelector('[data-fake]').style.display=t.checked?'block':'none';save()}});
 const A={
- menu(){ui.menu=!ui.menu},
+ menu(){ui.menu=!ui.menu;ui.confirm=null},
+ copy(d){const el=document.getElementById(d.id);copyText(el?el.value:'');ui.copied=d.id},
+ share(){const link=pageBase()+'#code='+makeCode(me()),text='My Leadership Pillars scores for our session. Open this on the device you will run the session on: '+link;
+  if(navigator.share){navigator.share({text}).catch(()=>{})}else copyText(link);ui.copied='share'},
+ unlock(){const h=me();h.cur.selfAt=null;h.cur.step=6;ui.copied=null;window.scrollTo(0,0)},
+ 'load-code'(){const o=readCode(ui.code);if(!o){ui.codeErr=true;ui.codeMsg="That doesn't look like a scores code. It starts with LP1.";return}ui.codeMsg=applyCode(o);if(!ui.codeErr)ui.code=''},
+ 'add-head'(){const n=(ui.nh.n||'').trim(),dp=(ui.nh.d||'').trim();if(n.length<2)return false;const id='h'+Date.now().toString(36);S.heads[id]=mkHead(id,n,dp||'Head of department',[],{});S.headId=id;ui.nh={n:'',d:''};ui.adding=false;ui.open=null;if(S.pending)ui.codeMsg=applyCode(S.pending);location.hash='session'},
+ 'new-head'(){ui.adding=true;ui.menu=false;location.hash='team'}, 'cancel-add'(){ui.adding=false},
+ backup(){const b=new Blob([JSON.stringify(S,null,1)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='leadership-pillars-trial-backup-'+TODAY+'.json';document.body.appendChild(a);a.click();a.remove();ui.menu=false},
+ restore(){document.getElementById('rf').click();ui.menu=false},
+ clear(){if(ui.confirm!=='clear'){ui.confirm='clear';return}S=seed();ui={menu:false,modal:null,open:null,mopen:null};location.hash=routes()[0][0]},
  role(d){S.role=d.id;ui.menu=false;ui.mopen=null;if(S.heads[d.id]){S.headId=d.id}location.hash=routes()[0][0]},
  reset(){const jx=S.jx||{};S=seed();S.jx=jx;ui={menu:false,modal:null,open:null,mopen:null};location.hash='team'},
  modal(d){ui.modal=d.id}, close(d,el,e){if(e.target.closest('.dlg')&&!e.target.closest('[data-a="close"]'))return false;ui.modal=null},
@@ -822,8 +897,13 @@ document.addEventListener('click',e=>{
  const before=location.hash;const r=fn(el.dataset,el,e);if(r===false)return;save();
  if(location.hash===before)render();
 });
-window.addEventListener('hashchange',()=>{ui.menu=false;render()});
+window.addEventListener('hashchange',()=>{ui.menu=false;takeIncoming();render()});
 setInterval(()=>{const el=document.querySelector('[data-clock]');if(!el||!el.dataset.s)return;const t=Math.floor(((+el.dataset.e||Date.now())-+el.dataset.s)/1000);el.textContent=String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0')},500);
+document.addEventListener('change',e=>{if(e.target.id!=='rf')return;const f=e.target.files[0];if(!f)return;const r=new FileReader();
+ r.onload=()=>{try{const o=JSON.parse(r.result);if(o&&o.v===1&&o.heads&&!o.heads.me){S=o;S.role='james';save();ui.menu=false;ui.codeMsg='';location.hash='team';render()}}catch(_){}e.target.value=''};r.readAsText(f)});
+function takeIncoming(){if(!(TRIAL&&!HEADMODE&&/^#code=/.test(location.hash)))return false;const o=readCode(location.hash.slice(6));try{history.replaceState(null,'',pageBase()+'#session')}catch(e){}
+ if(o){ui.codeMsg=applyCode(o);save()}else{ui.codeErr=true;ui.codeMsg="That link didn't carry a readable scores code. Ask for it again, or paste the code."}return true}
+takeIncoming();
 render();
 </script>
 </body>
