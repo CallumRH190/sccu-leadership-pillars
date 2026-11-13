@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SCCU Leadership Pillars</title>
+<style>
+/*FONTS*/
+:root{
+  /* Layout idea: one dark room, one gradient line. Seafoam is the head, pink is James, gradient is agreed. */
+  --navy:#182833; --navy-2:#1f3340; --navy-3:#27404f; --navy-deep:#121f28;
+  --line:rgba(255,255,255,.11); --line-2:rgba(255,255,255,.2);
+  --ink:#ffffff; --ink-2:rgba(255,255,255,.74); --ink-3:rgba(255,255,255,.52);
+  --purple:#6c3481; --pink:#c32e81; --pink-ink:#f07ab8; --sea:#53baab; --warn:#f2b866;
+  --grad:linear-gradient(90deg,#6c3481,#c32e81);
+  --display:'Comfortaa','Nunito Sans',system-ui,sans-serif;
+  --body:'Nunito Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --r:16px; color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{background:var(--navy);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit}
+h1,h2,h3{font-family:var(--display);font-weight:700;text-wrap:balance;line-height:1.15;letter-spacing:-.01em}
+:focus-visible{outline:2px solid var(--sea);outline-offset:3px;border-radius:6px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3)}
+.muted{color:var(--ink-2)} .dim{color:var(--ink-3)}
+.num{font-variant-numeric:tabular-nums}
+
+/* shell */
+.top{position:sticky;top:0;z-index:20;background:rgba(24,40,51,.92);backdrop-filter:blur(10px)}
+.top-in{max-width:1220px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:24px}
+.top::after{content:"";display:block;height:2px;background:var(--grad)}
+.brand{display:flex;flex-direction:column;line-height:1.1;text-decoration:none}
+.brand small{font-size:10px;font-weight:800;letter-spacing:.28em;color:var(--ink-3)}
+.brand b{font-family:var(--display);font-size:17px;font-weight:700}
+.nav{display:flex;gap:4px;margin-left:12px;flex-wrap:wrap}
+.nav a{padding:8px 14px;border-radius:999px;text-decoration:none;font-weight:700;font-size:14px;color:var(--ink-2)}
+.nav a:hover{color:#fff;background:rgba(255,255,255,.06)}
+.nav a.on{color:#fff;background:rgba(255,255,255,.1)}
+.top-r{margin-left:auto;display:flex;align-items:center;gap:12px;position:relative}
+.pill{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:5px 10px;border-radius:999px;border:1px solid var(--line-2);color:var(--ink-3);white-space:nowrap}
+.who{display:flex;align-items:center;gap:10px;padding:6px 12px 6px 6px;border-radius:999px;border:1px solid var(--line-2)}
+.who:hover{background:rgba(255,255,255,.06)}
+.who span{display:flex;flex-direction:column;text-align:left;line-height:1.15;font-size:13px;font-weight:700}
+.who small{font-weight:600;color:var(--ink-3);font-size:11px}
+.av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;background:var(--navy-3);flex:none}
+.av.j{background:var(--pink)} .av.h{background:var(--sea);color:#0e2a26} .av.s{background:var(--purple)}
+.menu{position:absolute;right:0;top:calc(100% + 10px);width:290px;background:var(--navy-2);border:1px solid var(--line-2);border-radius:var(--r);padding:8px;box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.menu p{padding:10px 10px 6px}
+.menu button{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border-radius:10px;text-align:left;font-weight:700;font-size:14px}
+.menu button small{display:block;font-weight:600;color:var(--ink-3);font-size:12px}
+.menu button:hover,.menu button.on{background:rgba(255,255,255,.08)}
+.menu hr{border:0;border-top:1px solid var(--line);margin:8px 0}
+main{max-width:1220px;margin:0 auto;padding:40px 24px 96px}
+.page-h{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:32px}
+.page-h h1{font-size:clamp(28px,3.4vw,40px);margin-top:10px}
+.page-h p.lead{color:var(--ink-2);max-width:60ch;margin-top:10px;font-size:17px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 24px;border-radius:999px;font-weight:800;font-size:15px;background:var(--grad);color:#fff;transition:transform .15s,opacity .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn[disabled]{opacity:.35;cursor:not-allowed;transform:none}
+.btn.ghost{background:none;border:1px solid var(--line-2)}
+.btn.ghost:hover{background:rgba(255,255,255,.06)}
+.btn.sm{padding:8px 16px;font-size:13px}
+.link{color:var(--sea);font-weight:700;text-decoration:underline;text-underline-offset:3px;font-size:14px}
+.card{background:var(--navy-2);border:1px solid var(--line);border-radius:var(--r);padding:24px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;border:1px solid var(--line-2);color:var(--ink-2);white-space:nowrap}
+.chip.warn{border-color:var(--warn);color:var(--warn)}
+.chip.sea{border-color:var(--sea);color:var(--sea)}
+.chip.ok{border-color:transparent;background:rgba(83,186,171,.16);color:var(--sea)}
+.chip.grad{border:0;background:var(--grad);color:#fff}
+textarea,input[type=date],input[type=text]{width:100%;font:inherit;color:#fff;background:var(--navy-deep);border:1px solid var(--line-2);border-radius:12px;padding:12px 14px}
+textarea{resize:vertical;min-height:84px}
+textarea:focus,input:focus{outline:none;border-color:var(--sea)}
+label.fl{display:block;font-weight:700;font-size:14px;margin-bottom:8px}
+
+/* model */
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.pcard{position:relative;text-align:left;padding:26px 24px 22px;border-radius:var(--r);background:var(--navy-2);border:1px solid var(--line);display:flex;flex-direction:column;gap:14px;transition:border-color .2s,transform .2s;overflow:hidden}
+.pcard::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--grad);transform:scaleX(.18);transform-origin:left;transition:transform .35s}
+.pcard:hover{border-color:var(--line-2);transform:translateY(-2px)} .pcard:hover::before{transform:scaleX(1)}
+.pcard .opp{font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.pcard h2{font-size:27px}
+.pcard p{color:var(--ink-2);font-size:15px}
+.traits{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.ptabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:28px}
+.ptabs button{padding:8px 14px;border-radius:999px;font-weight:700;font-size:14px;color:var(--ink-2);border:1px solid var(--line)}
+.ptabs button.on{background:#fff;color:var(--navy);border-color:#fff}
+.ptabs button.done::after{content:" ✓";color:var(--sea)} .ptabs button.on.done::after{color:var(--navy)}
+.mdet{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:start}
+.bigspec{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin:10px 0 18px}
+.bigspec .o{font-family:var(--display);font-size:22px;color:var(--ink-3)}
+.bigspec .ln{flex:1;min-width:60px;height:3px;border-radius:3px;background:linear-gradient(90deg,rgba(255,255,255,.15),#6c3481 40%,#c32e81)}
+.bigspec .p{font-family:var(--display);font-weight:700;font-size:clamp(34px,4.6vw,54px)}
+.def{font-size:19px;color:var(--ink-2);max-width:58ch}
+.tl{display:grid;gap:14px;margin-top:28px}
+.tl div{padding-left:16px;border-left:2px solid var(--line-2)}
+.tl b{display:block;font-family:var(--display);font-size:16px}
+.tl span{color:var(--ink-2);font-size:15px}
+.fake{margin-top:28px;padding:18px 20px;border-radius:var(--r);border:1px dashed var(--line-2)}
+.fake p{margin-top:6px;color:var(--ink-2)}
+.ladder{display:grid;gap:10px}
+.rung{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:16px 18px;border-radius:14px;background:var(--navy-2);border:1px solid var(--line)}
+.rung .n{font-family:var(--display);font-weight:700;font-size:26px;color:var(--ink-3)}
+.rung p{font-size:15px;color:var(--ink-2)}
+.rung small{display:block;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:4px}
+.box{margin-top:16px;padding:18px 20px;border-radius:14px;background:var(--navy-2);border:1px solid var(--line)}
+.box p{color:var(--ink-2);font-size:15px;margin-top:8px}
+.empty{color:var(--ink-3);font-style:italic}
+
+/* slider */
+.sl{position:relative;height:64px;padding:0 24px;touch-action:none;cursor:pointer;user-select:none}
+.sl-track{position:absolute;left:24px;right:24px;top:50%;height:6px;margin-top:-3px;border-radius:6px;background:rgba(255,255,255,.14)}
+.sl-fill{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:var(--sea)}
+.sl.james .sl-fill{background:var(--pink)}
+.sl-dot{position:absolute;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:rgba(255,255,255,.45)}
+.sl-thumbwrap{position:absolute;left:24px;right:24px;top:0;bottom:0;pointer-events:none}
+.sl-thumb{position:absolute;top:50%;width:48px;height:48px;margin:-24px 0 0 -24px;border-radius:50%;background:var(--sea);color:#0e2a26;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:19px;box-shadow:0 6px 20px rgba(0,0,0,.35);transition:left .16s ease-out}
+.sl.james .sl-thumb{background:var(--pink);color:#fff}
+.sl.unset .sl-thumb{background:none;border:2px dashed var(--line-2);box-shadow:none;color:var(--ink-3);font-size:14px}
+.sl.sm{height:44px}.sl.sm .sl-thumb{width:36px;height:36px;margin:-18px 0 0 -18px;font-size:15px}
+.sl.lock{pointer-events:none}
+
+/* self-score stage */
+.stage{max-width:940px;margin:0 auto}
+.words{display:flex;justify-content:space-between;align-items:baseline;gap:24px;margin:26px 0 6px}
+.words span{font-family:var(--display);font-weight:700;font-size:clamp(26px,4.4vw,48px);transition:opacity .2s}
+.words .wo{font-weight:400}
+.anchor{min-height:150px;margin-top:22px;display:grid;gap:18px;align-content:start}
+.anchor.two{grid-template-columns:1fr 1fr}
+.anc small{display:block;font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-bottom:8px}
+.anc p{font-size:clamp(18px,2.1vw,23px);line-height:1.4;animation:fade .28s ease-out}
+.anchor.two .anc p{font-size:17px;color:var(--ink-2)}
+.anc.far p{color:var(--ink-2)}
+.anc-empty{font-size:20px;color:var(--ink-3)}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.evi{margin-top:26px;display:grid;grid-template-columns:1fr 190px;gap:16px;align-items:start}
+.evi .full{grid-column:1/-1;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.snav{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:30px;flex-wrap:wrap}
+.hint{font-size:14px;color:var(--ink-3)}
+.hint.bad{color:var(--warn)}
+.intro{max-width:720px;margin:24px auto 0;text-align:left}
+.intro h1{font-size:clamp(32px,4.4vw,52px);margin:14px 0 18px}
+.intro ul{list-style:none;display:grid;gap:14px;margin:26px 0 30px}
+.intro li{padding-left:18px;border-left:2px solid var(--sea);color:var(--ink-2);font-size:17px}
+.intro li b{color:#fff;display:block}
+.rrow{display:grid;grid-template-columns:150px 1fr;gap:20px;padding:18px 0;border-top:1px solid var(--line);align-items:start}
+.rrow h3{font-size:17px}
+.rrow small{color:var(--ink-3);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.rrow p{color:var(--ink-2);font-size:15px;margin-top:10px}
+.mini{position:relative;height:22px}
+.mini i{position:absolute;left:0;right:0;top:50%;height:4px;margin-top:-2px;border-radius:4px;background:rgba(255,255,255,.14)}
+.mk{position:absolute;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800}
+.mk.h{background:var(--sea);color:#0e2a26}.mk.j{background:var(--pink);color:#fff}.mk.a{background:var(--grad);color:#fff}
+.mini .std{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:rgba(255,255,255,.5)}
+
+/* session */
+.sess{display:grid;grid-template-columns:230px 1fr;gap:40px;align-items:start}
+.rail{position:sticky;top:96px;display:grid;gap:2px}
+.rail .st{display:grid;grid-template-columns:26px 1fr;gap:12px;align-items:center;padding:8px 0;color:var(--ink-3);font-weight:700;font-size:14px}
+.rail .st i{width:26px;height:26px;border-radius:50%;border:1px solid var(--line-2);display:grid;place-items:center;font-style:normal;font-size:12px}
+.rail .st.done{color:var(--ink-2)} .rail .st.done i{background:rgba(83,186,171,.18);border-color:transparent;color:var(--sea)}
+.rail .st.on{color:#fff} .rail .st.on i{background:var(--grad);border-color:transparent;color:#fff}
+.clock{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+.clock b{font-family:var(--display);font-size:26px;display:block}
+.jrow{padding:22px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:200px 1fr;gap:24px}
+.jrow h3{font-size:20px} .jrow .o{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.jrow .anchor{min-height:0;margin-top:6px}.jrow .anc p,.jrow .anchor.two .anc p{font-size:15px;color:var(--ink-2)}.jrow .anc-empty{font-size:15px}
+.jrow .evi{margin-top:14px}
+.chk{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;margin-top:12px;cursor:pointer}
+.chk input{width:18px;height:18px;accent-color:var(--pink)}
+.fakeline{margin-top:10px;font-size:14px;color:var(--warn)}
+.hidden-note{display:flex;gap:12px;align-items:center;padding:14px 18px;border-radius:14px;background:var(--navy-2);border:1px solid var(--line);color:var(--ink-2);font-size:15px;margin-bottom:8px}
+.lockic{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);display:grid;place-items:center;flex:none}
+
+.rv{padding:8px 0 0}
+.rv-row{display:grid;grid-template-columns:170px 1fr 92px;gap:20px;align-items:center;padding:20px 0;border-top:1px solid var(--line)}
+.rv-row h3{font-size:19px}.rv-row .o{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.rv-track{position:relative;height:58px}
+.rv-track i{position:absolute;left:0;right:0;top:50%;height:4px;margin-top:-2px;border-radius:4px;background:rgba(255,255,255,.14)}
+.rv-track .std{position:absolute;top:8px;bottom:8px;width:2px;margin-left:-1px;background:rgba(255,255,255,.55);opacity:0;transition:opacity .5s 1.6s}
+.rv-track .std b{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap}
+.rv-gap{position:absolute;top:50%;height:4px;margin-top:-2px;background:#fff;border-radius:4px;transform:scaleX(0);transform-origin:left;transition:transform .5s ease-out}
+.rv-mk{position:absolute;width:30px;height:30px;margin-left:-15px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800;opacity:0;transition:left .7s cubic-bezier(.2,.8,.2,1),opacity .25s}
+.rv-mk.h{top:0;background:var(--sea);color:#0e2a26}.rv-mk.j{bottom:0;background:var(--pink);color:#fff}
+.rv-g{font-family:var(--display);font-weight:700;font-size:15px;text-align:right;opacity:0;transition:opacity .4s}
+.rv-g small{display:block;font-family:var(--body);font-size:11px;font-weight:700;color:var(--ink-3);letter-spacing:.1em;text-transform:uppercase}
+.rv.go .rv-mk,.rv.go .rv-g{opacity:1}.rv.go .rv-gap{transform:scaleX(1)}.rv.go .std{opacity:1}
+.rv.pre .rv-row{opacity:.5}
+.rv-cta{display:grid;place-items:center;text-align:center;gap:16px;padding:44px 20px;border-radius:var(--r);border:1px solid var(--line);background:radial-gradient(ellipse at 50% 0%,rgba(195,46,129,.22),transparent 65%),var(--navy-2);margin-bottom:8px}
+.rv-cta h2{font-size:clamp(24px,3vw,34px)}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;font-weight:700;color:var(--ink-2);align-items:center}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:12px;height:12px;border-radius:50%;display:inline-block}
+.xc{border:1px solid var(--line);border-radius:var(--r);background:var(--navy-2);margin-bottom:12px;overflow:hidden}
+.xc-h{display:grid;grid-template-columns:170px 1fr 236px;gap:20px;align-items:center;width:100%;padding:18px 22px;text-align:left}
+.xc-h h3{font-size:18px}
+.xc-b{padding:6px 22px 24px;display:grid;gap:22px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ev{padding:16px 18px;border-radius:14px;background:var(--navy-deep);border-left:3px solid var(--sea)}
+.ev.j{border-left-color:var(--pink)}
+.ev small{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.ev p{margin-top:6px;font-size:15px}
+.open-line{font-family:var(--display);font-size:19px;line-height:1.4}
+.qs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.q b{font-family:var(--display);font-size:15px}.q em{display:block;font-style:normal;color:var(--ink-3);font-size:13px;margin:2px 0 8px}
+.q li{list-style:none;font-size:14.5px;color:var(--ink-2);padding:8px 0;border-top:1px solid var(--line)}
+.agree{display:flex;gap:6px;flex-wrap:wrap;align-items:flex-start}
+.agree button{position:relative;width:44px;height:44px;border-radius:12px;border:1px solid var(--line-2);font-family:var(--display);font-weight:700}
+.agree button:hover{background:rgba(255,255,255,.08)}
+.agree button.on{background:var(--grad);border-color:transparent}
+.agree button u{position:absolute;bottom:-9px;width:6px;height:6px;border-radius:50%;text-decoration:none}
+.agree button u.h{left:12px;background:var(--sea)}.agree button u.j{right:12px;background:var(--pink)}
+.prompt{padding:16px 20px;border-radius:14px;border:1px solid var(--pink);background:rgba(195,46,129,.1);margin-bottom:14px;font-size:15px}
+.prompt small{display:block;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--pink-ink);margin-bottom:4px}
+.ftiles{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.ft{padding:16px 12px;border-radius:14px;border:1px solid var(--line);background:var(--navy-2);text-align:left;display:grid;gap:6px}
+.ft b{font-family:var(--display);font-size:14px}.ft .n{font-family:var(--display);font-weight:700;font-size:28px}
+.ft.on{border-color:transparent;background:var(--grad)}
+.ft small{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)} .ft.on small{color:#fff}
+.asgs{display:grid;gap:10px;margin-top:14px}
+.asg{display:grid;grid-template-columns:22px 1fr;gap:14px;padding:16px 18px;border-radius:14px;border:1px solid var(--line);background:var(--navy-2);text-align:left;width:100%}
+.asg i{width:20px;height:20px;border-radius:50%;border:2px solid var(--line-2);margin-top:2px}
+.asg.on{border-color:var(--sea)}.asg.on i{border-color:var(--sea);background:radial-gradient(var(--sea) 45%,transparent 50%)}
+.asg small{display:block;color:var(--ink-3);font-size:12px;font-weight:700;margin-top:4px}
+
+/* team */
+.stats{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:16px;margin-bottom:24px}
+.stat small{display:block;margin-bottom:10px}
+.stat b{font-family:var(--display);font-size:30px;display:block;line-height:1.1}
+.stat p{color:var(--ink-2);font-size:14px;margin-top:8px}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--navy-2)}
+table.team{width:100%;border-collapse:collapse;min-width:860px}
+.team th{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);text-align:center;padding:16px 8px}
+.team th:first-child,.team td:first-child{text-align:left;padding-left:22px}
+.team th.weak{color:var(--warn)}
+.team td{padding:14px 8px;border-top:1px solid var(--line);text-align:center;vertical-align:middle}
+.team td.act{text-align:right;padding-right:22px;white-space:nowrap}
+.hd{display:flex;align-items:center;gap:12px}.hd b{display:block;font-size:15px}.hd small{color:var(--ink-3);font-size:12px}
+.sc{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:12px;font-family:var(--display);font-weight:700;background:rgba(255,255,255,.06)}
+.sc.low{background:none;border:1.5px solid var(--warn);color:var(--warn)}
+.team tfoot td{color:var(--ink-2);font-weight:700;font-size:14px}
+
+/* profile */
+.hpick{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.hpick button{display:flex;align-items:center;gap:8px;padding:6px 14px 6px 6px;border-radius:999px;border:1px solid var(--line);font-weight:700;font-size:14px;color:var(--ink-2)}
+.hpick button.on{background:#fff;color:var(--navy);border-color:#fff}.hpick button.on .dim{color:rgba(24,40,51,.62)}
+.move{font-family:var(--display);font-weight:700;font-size:clamp(24px,3vw,36px);line-height:1.25;max-width:26ch}
+.move .up{color:var(--sea)}.move .dn{color:var(--pink-ink)}
+.prof{display:grid;grid-template-columns:420px 1fr;gap:40px;align-items:center;margin:32px 0}
+.radar text{font-family:var(--body);font-weight:700;fill:#fff;font-size:13px}
+.radar text.s{fill:rgba(255,255,255,.55);font-size:12px}
+.prow{display:grid;grid-template-columns:130px 140px 40px 54px 1fr;gap:14px;align-items:center;padding:13px 0;border-top:1px solid var(--line)}
+.prow b{font-family:var(--display);font-size:15px}
+.prow .big{font-family:var(--display);font-weight:700;font-size:22px;text-align:right}
+.delta{font-weight:800;font-size:13px}.delta.up{color:var(--sea)}.delta.dn{color:var(--pink-ink)}.delta.eq{color:var(--ink-3)}
+.prow .q{font-size:12px;color:var(--ink-3);text-align:right}
+.three{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:16px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:14px}
+.kpi b{font-family:var(--display);font-size:24px;display:block}.kpi span{color:var(--ink-2);font-size:13px}
+.blank{display:grid;place-items:center;text-align:center;gap:14px;padding:70px 20px;border:1px dashed var(--line-2);border-radius:var(--r)}
+.blank h2{font-size:26px}.blank p{color:var(--ink-2);max-width:46ch}
+
+/* summary sheet */
+.sum-act{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;max-width:794px;margin:0 auto 18px}
+.sheetwrap{overflow-x:auto}
+.sheet{width:794px;min-height:1123px;margin:0 auto;background:var(--navy);border:1px solid var(--line-2);position:relative;padding:46px 48px 40px;display:flex;flex-direction:column;gap:22px;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.sheet::before{content:"";position:absolute;left:0;right:0;top:0;height:8px;background:var(--grad)}
+.sh-top{display:flex;justify-content:space-between;align-items:flex-start}
+.sh-name{font-family:var(--display);font-weight:700;font-size:34px;line-height:1.1;margin-top:4px}
+.sh-grid{display:grid;grid-template-columns:310px 1fr;gap:22px;align-items:center}.sh-grid .radar text{font-size:12px}.sh-grid .radar text.s{font-size:11px}
+.sh-t{width:100%;border-collapse:collapse;font-size:13.5px}
+.sh-t th{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);padding:6px 6px;text-align:center}
+.sh-t th:first-child,.sh-t td:first-child{text-align:left;padding-left:0}
+.sh-t td{padding:9px 6px;border-top:1px solid var(--line);text-align:center}
+.sh-t td b{font-family:var(--display)}
+.sh-t .ag{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;background:var(--grad);font-family:var(--display);font-weight:700}
+.sh-ev{display:grid;grid-template-columns:1fr 1fr;gap:12px 22px}
+.sh-ev div{font-size:11.5px;line-height:1.45;color:var(--ink-2);padding-top:8px;border-top:1px solid var(--line)}
+.sh-ev b{font-family:var(--display);font-size:12.5px;color:#fff;display:block;margin-bottom:3px}
+.sh-ev i{font-style:normal;font-weight:800}.sh-ev i.h{color:var(--sea)}.sh-ev i.j{color:var(--pink-ink)}
+.sh-focus{border-radius:14px;padding:2px;background:var(--grad)}
+.sh-focus>div{background:var(--navy);border-radius:12px;padding:18px 22px}
+.sh-focus h3{font-size:22px;margin:4px 0 8px}
+.sh-focus p{font-size:14px;color:var(--ink-2)}
+.sh-foot{margin-top:auto;display:flex;justify-content:space-between;gap:20px;font-size:11px;color:var(--ink-3);padding-top:14px;border-top:1px solid var(--line)}
+
+/* modal */
+.ov{position:fixed;inset:0;z-index:50;background:rgba(10,18,24,.72);display:grid;place-items:center;padding:24px;overflow:auto}
+.dlg{width:min(760px,100%);max-height:calc(100vh - 48px);overflow:auto;background:var(--navy-2);border:1px solid var(--line-2);border-radius:20px;padding:34px 36px}
+.dlg h2{font-size:28px;margin:8px 0 6px}
+.dlg h3{font-size:17px;margin:22px 0 6px}
+.dlg p{color:var(--ink-2)}
+.dlg table{width:100%;border-collapse:collapse;margin-top:16px}
+.dlg td{padding:12px 0;border-top:1px solid var(--line);font-size:15px}
+.dlg td:last-child{text-align:right;font-family:var(--display);font-weight:700;white-space:nowrap;padding-left:16px}
+.dlg-x{display:flex;justify-content:flex-end;margin-top:26px}
+
+@media (max-width:960px){
+  .pgrid{grid-template-columns:1fr 1fr}.mdet,.prof,.sess{grid-template-columns:1fr}.rail{position:static;display:flex;flex-wrap:wrap;gap:6px 16px}.rail .st{grid-template-columns:26px auto}.clock{border:0;margin:0;padding:0}.clock b{display:inline;font-size:18px;margin:0 10px}
+  .qs,.three,.stats{grid-template-columns:1fr}.ftiles{grid-template-columns:repeat(3,1fr)}.jrow{grid-template-columns:1fr}.prof .radar{max-width:420px;margin:0 auto}
+  .pill{display:none}
+}
+@media (max-width:640px){
+  .pgrid,.two,.evi,.anchor.two,.kpis{grid-template-columns:1fr}.rrow,.rv-row,.xc-h{grid-template-columns:1fr}.rv-g{text-align:left}.prow{grid-template-columns:1fr 60px 50px}.prow svg,.prow .q{display:none}
+  .who span{display:none}.top-in{gap:10px;padding:12px 16px}main{padding:28px 16px 80px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{
+  .top,.sum-act{display:none!important} body,main{background:var(--navy);padding:0;margin:0;max-width:none}
+  .sheet{border:0;box-shadow:none;margin:0} *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+"use strict";
+/* ---------- content (word for word from the approved content pack) ---------- */
+const P=[
+{id:'resilience',name:'Resilience',opp:'Reactivity',
+ def:'Staying calm in the storm, holding your level of performance whatever is happening around you, and bouncing back',
+ fake:'Turning up and grinding while the mood leaks onto the team',
+ traits:[
+  {n:'Composure',d:"Stays level under pressure, so the team can't read the bad day off them",q:['What was your worst day this month, and what did your team see from you?','If I asked your team which day you were having a bad one, could they name it?']},
+  {n:'Consistency',d:'Output and standards hold through hard periods',q:['Which deadline or standard moved in your hardest week, and which held?','What did you still deliver in the week you least felt like it?']},
+  {n:'Recovery',d:'Back to normal quickly after a setback, without being prompted',q:['What knocked you this month, and how long before you were back to normal?','Who or what got you moving again?']}],
+ anc:{3:'The team can tell what kind of day it is from the moment they walk in. A setback stops the work, and it takes someone else to get it moving again.',
+  5:'Keeps working through a hard week, but the mood shows and the team go quiet around it. Back to normal in a few days, usually after a conversation with James.',
+  7:'Stays level in front of the team when things go wrong. Deadlines and standards hold through a hard week. Back to normal by the next day without being asked.',
+  9:"The team get steadier when things get harder, because that is what they see. Setbacks are dealt with the same day, and the department's output in a hard month looks the same as in a good one."},
+ asg:[{t:'Next time something goes wrong, take ten minutes on your own before you speak to the team. Then give them the facts and the plan. Tell James what happened and what the team saw.',tr:'Composure'},
+  {t:"Pick the one weekly output that slips when you're under pressure. Deliver it on time every week this month and bring the four dates to the next session.",tr:'Consistency'},
+  {t:"After your next setback, message James the same day with three lines: what happened, what you've done about it, and what's next.",tr:'Recovery'}],
+ ex:{s:'A head keeps turning up and working through a hard period. Nothing is late. But their mood is low, the team can feel it, and the room goes flat.',
+  r:"This is Resilience, and the trait is Composure. The work held. The state didn't, and the team carried it. Turning up and grinding while the mood leaks onto the team looks like Resilience but isn't."}},
+{id:'decisiveness',name:'Decisiveness',opp:'Inaction',
+ def:'Making the decision regardless of pressure, or going to get what you need to make it. Decisive on the action, not only the decision',
+ fake:'Fast calls without the missing information, or one email sent and called done',
+ traits:[
+  {n:'Ownership',d:'Makes the call, including what comes first, and stands behind the result without blame',q:['What decision did you make this month that you could have passed up to me?','Which decision is still sitting with you, and what is it waiting for?']},
+  {n:'Asking',d:'When information or authority is missing, goes and gets it that day',q:['When did you not have what you needed to decide, and what did you do that day?','What are you waiting on right now, and when did you last ask for it?']},
+  {n:'Follow-through',d:"Acts on the decision and chases until it's closed",q:['What did you send this month that got no reply, and what did you do next?',"What did you start this month that isn't closed yet?"]}],
+ anc:{3:'Decisions wait until someone else makes them. Sends one message, hears nothing and leaves it there. James finds out when the deadline has passed.',
+  5:"Makes the call when pushed or when the deadline forces it. Asks for what's missing, but days later. Chases once, then lets it sit.",
+  7:"Makes the calls that are theirs that week and says what comes first. When something is missing, goes and gets it that day. Chases until it's closed.",
+  9:"Decisions get made at the point they're needed, and the team know the order of priorities without asking. Every action has a name and a date and gets closed. James hears the decision and the result together."},
+ asg:[{t:"Bring the one decision you've been sitting on to your next catch-up with James, already made. Tell him what you decided, what comes first and when it starts.",tr:'Ownership'},
+  {t:"List everything you're waiting on from someone else. Phone or see each person this week, get an answer or a date, and bring the list back closed.",tr:'Asking'},
+  {t:"For every request you send this month, set your chase date on the day you send it. If there's no reply by then, pick up the phone. Bring one example where chasing changed the result.",tr:'Follow-through'}],
+ ex:{s:'A head emailed tutors about a go-live date. Nobody replied, and nothing more was done. The COO phoned them, offered two dates, and everyone accepted.',
+  r:'This is Decisiveness, and the trait is Follow-through. The decision had been made. The action stopped at one email. Decisive on the action, not only the decision. The email itself is a separate moment, logged under Communication.'}},
+{id:'ingenuity',name:'Ingenuity',opp:'Rigidity',
+ def:'Finding a way over, under, around or through the problem, and being creative with it',
+ fake:'Constantly switching approach without finishing anything',
+ traits:[
+  {n:'Adaptability',d:"Drops a method when results show it isn't working",q:["What did you stop doing this month because it wasn't working?","What are you still doing the same way even though the results haven't moved?"]},
+  {n:'Resourcefulness',d:'Gets it done with the people, time and budget available',q:['What did you get done this month without the people, time or budget you wanted?','Where did you say "we can\'t" this month, and what had you tried before you said it?']},
+  {n:'Creativity',d:'Arrives with new options, not just the problem',q:['What problem did you bring me this month, and what options came with it?',"What did you try this month that the department hadn't done before?"]}],
+ anc:{3:"Keeps using the same method after the results say it isn't working. Brings James the problem with no options. Says it can't be done without more people, time or budget.",
+  5:'Changes approach when told to. Brings one option, usually the obvious one. Finds a way round when pushed.',
+  7:"Drops a method when the numbers show it isn't working and tries another the same week. Arrives with two or three options and a recommendation. Gets it done with the people, time and budget they have.",
+  9:'Checks results early and changes approach before the target is at risk. The team bring options too, because that is how problems get raised in the department. Other heads borrow their fixes.'},
+ asg:[{t:"Pick one target that's behind. Write down what you've been doing and what the numbers say. Change one thing in the method this week and bring both sets of numbers to the next session.",tr:'Adaptability'},
+  {t:"Take one thing you've said needs more people or budget. Deliver a first version this month with what you already have.",tr:'Resourcefulness'},
+  {t:"The next problem you bring to James, bring three options with it and say which one you'd pick.",tr:'Creativity'}],
+ ex:{s:"A salesperson keeps making calls that aren't working, with a target still to hit.",
+  r:"This is Ingenuity, and the trait is Adaptability. The effort is there. The method isn't changing. They are still trying, so Decisiveness stays untouched. They are trying the same failed way, and that makes it Ingenuity."}},
+{id:'assertiveness',name:'Assertiveness',opp:'Avoidance',
+ def:'Being clear on expectations, timescales and consequences, with good intent, so nobody walks away unsure. No grey',
+ fake:'Aggression, or being assertive with bad intent',
+ traits:[
+  {n:'Expectations',d:'States what, by when, and the consequence',q:["Pick one task you handed over this month. What did you say, by when, and what happens if it's missed?",'If I asked that person for the deadline and the consequence, what would they tell me?']},
+  {n:'Directness',d:'Says the uncomfortable thing to the person, plainly and promptly',q:['Which conversation did you put off this month?','Who heard about the problem before the person did?']},
+  {n:'Challenge',d:'Acts when a standard is missed instead of passing it upward',q:['Which missed standard did you deal with yourself this month, and on what day?','What did you bring to me this month that was yours to deal with?']}],
+ anc:{3:"Avoids the conversation or hints at it. Issues reach James before they've been raised with the person.",
+  5:'Raises issues when pushed, but late, softened, or without a deadline or consequence.',
+  7:'Raises issues within the week, directly with the person, stating what, by when and what happens if not.',
+  9:'The team already know the standard. Issues are raised the same day and rarely repeat.'},
+ asg:[{t:"Sit with the underperformer and have the one-to-one you've not been comfortable having, then debrief with James.",tr:'Directness'},
+  {t:"Watch James run a performance conversation, or lead one with James in support. Debrief straight after: what was said, what was clear, and what you'll use next time.",tr:'Challenge'},
+  {t:"For every task you hand over this month, say what, by when and what happens if it's missed. Put it in writing the same day. Bring two examples to the next session.",tr:'Expectations'}],
+ ex:{s:"A head knew a team member was underperforming and didn't address it. The COO was left to deal with it.",
+  r:"This is Assertiveness, and the trait is Challenge. A standard was missed and it was passed upward. When someone's performance isn't confronted, the pillar is always Assertiveness."}},
+{id:'communication',name:'Communication',opp:'Assumption',
+ def:'Building connection and creating clarity so the message lands and people respond',
+ fake:"Being liked or talking a lot while nobody knows what's expected",
+ traits:[
+  {n:'Rapport',d:'Builds relationships in and beyond their own team, so people bring problems early',q:['Who outside your team brought you a problem this month before it got big?','What did you find out late this month, and who knew before you?']},
+  {n:'Clarity',d:'Picks the right channel and checks the message landed',q:["What's the most important message you sent this month, and how do you know it landed?",'Which message did you have to send twice, and what was missing the first time?']},
+  {n:'Listening',d:"Can play back the other person's view accurately, and hears bad news without punishing it",q:["Think of a disagreement this month. What was the other person's view, in their words?",'What bad news did you get this month, and what did you say in the first minute?']}],
+ anc:{3:'Sends the message and assumes it landed. People find out late or second hand. Problems reach them after everyone else already knows.',
+  5:'Gets the message out, usually by email, and checks only when something goes wrong. Good relationships inside their own team, thin outside it. Hears bad news, but the person gets a reaction first.',
+  7:"Picks the right channel for the message and checks it landed. Can play back the other person's view before giving their own. People in and beyond their team bring problems early.",
+  9:'The team can say the priorities in their own words without checking. Bad news reaches them first and fast, from their own team and from other departments. Other heads come to them when a message has to land.'},
+ asg:[{t:'For your three most important messages this month, choose the channel on purpose: phone, face to face or written. Within 24 hours, ask one person to tell you what they understood. Bring the three to the next session.',tr:'Clarity'},
+  {t:'Book 20 minutes with one head you rarely speak to. Ask what your team could do that would make their job easier. Do one of the things they say.',tr:'Rapport'},
+  {t:"In your next disagreement, say the other person's view back to them until they tell you you've got it right. Then give yours. Tell James how it changed the conversation.",tr:'Listening'}],
+ ex:{s:"A head emailed tutors about a go-live date and took it that the email had done the job. Nobody replied. Nobody was asked whether they'd seen it. When the COO phoned and offered two dates, everyone accepted.",
+  r:'This is Communication, and the trait is Clarity. Email was the wrong channel for something that needed an answer, and nobody checked the message had landed. Doing nothing after the silence is a second moment, logged under Decisiveness. Two moments, two entries, one pillar each.'}},
+{id:'enthusiasm',name:'Enthusiasm',opp:'Indifference',
+ def:'How encouraging you are with others, how invested you are in the objective, and how driven you are to reach it. Visible commitment, not cheerfulness',
+ fake:'Cheerleading without delivery',
+ traits:[
+  {n:'Encouragement',d:"Recognises good work and actively grows people's capability",q:['Whose work did you recognise this month, and what exactly did you say?',"Who in your team can do something now that they couldn't three months ago, and what was your part in it?"]},
+  {n:'Investment',d:'Treats the objective as their own, beyond the job description',q:["What did you pick up this month that wasn't strictly yours?",'When did you hear "that\'s not my job" this month, from you or your team, and what happened next?']},
+  {n:'Drive',d:'Keeps effort and pace up until the target is hit',q:['Where are you against target today, and what did you do last week to move it?','When did the pace drop this month, and what brought it back?']}],
+ anc:{3:'Does what the job description says and stops there. Good work in the team goes unmentioned. Pace drops when nobody is checking.',
+  5:'Committed to the parts of the objective they like. Praises in general terms, now and then. Pushes hard near the deadline and goes quieter in between.',
+  7:'Talks about the objective as theirs and picks up what needs doing, even when it sits outside the role. Tells people what they did well, with specifics, most weeks. Keeps the pace up until the target is hit.',
+  9:'The team talk about the target as their own. People in the department are getting better at their jobs because time is being put into them. When a target is hit, the next one is already set.'},
+ asg:[{t:'Each week this month, tell one person exactly what they did well and what it made possible. Do it in person. Bring the four names to the next session.',tr:'Encouragement'},
+  {t:'Pick one thing that would help the objective and that nobody owns. Take it, finish it this month, and tell James what it was.',tr:'Investment'},
+  {t:"Put the team's number against target where everyone can see it and update it every week. Open your team meeting with it.",tr:'Drive'}],
+ ex:{s:'A team member who was under capacity refused extra work with "it\'s not in my job description".',
+  r:"This is Enthusiasm, and the trait is Investment. They had the time. The objective wasn't being treated as theirs."}}
+];
+const PI=Object.fromEntries(P.map((p,i)=>[p.id,i]));
+const CHOOSER=[['They stopped trying','Decisiveness'],['They kept trying the same failed way','Ingenuity'],["They didn't confront someone's performance",'Assertiveness, always'],['They assumed a message had landed','Communication'],['Adversity knocked their state and the team felt it','Resilience'],["They didn't treat the objective as theirs",'Enthusiasm']];
+const LINKS=[
+ {a:'enthusiasm',b:'resilience',first:'enthusiasm',t:'Low Enthusiasm usually sits under low Resilience. Work on Enthusiasm first so they have the energy to be resilient.'},
+ {a:'resilience',b:'ingenuity',first:'resilience',t:"Ingenuity depends on Resilience. You can't see options while you're thrown by the problem. Steady the state first, then ask for options."},
+ {a:'assertiveness',b:'decisiveness',first:'assertiveness',t:"Assertiveness feeds Decisiveness. People who avoid the conversation tend to avoid the decision. Start with the conversation they're putting off."}];
+const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const NOW='2026-11',TODAY=(()=>{const d=new Date(),s=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');return s<'2026-11-11'?'2026-11-11':s>'2026-11-30'?'2026-11-30':s})(),STD=7;
+const mName=m=>MN[+m.slice(5,7)-1], mShort=m=>mName(m).slice(0,3);
+const fDate=d=>d?(+d.slice(8,10))+' '+MN[+d.slice(5,7)-1].slice(0,3):'';
+const fDateL=d=>d?(+d.slice(8,10))+' '+MN[+d.slice(5,7)-1]+' '+d.slice(0,4):'';
+const quarter=m=>{const n=+m.slice(5,7);return n>=3&&n<=5?'Q1':n>=6&&n<=8?'Q2':n>=9&&n<=11?'Q3':'Q4'};
+
+/* ---------- sample data: fictional heads, fictional departments ---------- */
+function E(s,ex,d,over){return {s,ex,d,over:!!over}}
+function seed(){
+ const H=(id,name,dept,hist,cur)=>({id,name,dept,ini:name.split(' ').map(w=>w[0]).join(''),hist,cur:Object.assign({self:{},selfAt:null,james:{},jamesAt:null,revealed:false,agreed:{},focus:null,asg:null,asgOwn:'',due:'',review:null,done:false,sessionDate:null,startedAt:null,endedAt:null,step:-1},cur||{})});
+ const m=(mo,ag,focus,ai,due)=>({m:'2026-'+mo,ag,focus,asg:focus?P[PI[focus]].asg[ai].t:null,due});
+ const map=o=>Object.fromEntries(P.map((p,i)=>[p.id,o[i]]));
+ return {v:3,role:'james',headId:'tom',jx:{},seenHow:{},heads:{
+  priya:H('priya','Priya Nair','Partnerships',[
+    m('06',[7,6,7,4,7,8]),m('07',[7,6,7,5,7,8]),m('08',[7,7,7,5,8,8]),m('09',[8,7,7,6,8,8]),m('10',[8,7,8,6,8,9],'assertiveness',0,'2026-11-04')],
+   {selfAt:'2026-11-03',jamesAt:'2026-11-04',revealed:true,done:true,sessionDate:'2026-11-05',review:'done',step:6,
+    self:map([E(8,'A partner pulled out two days before launch. I told the team the facts at 9am and we had a replacement plan by lunch.','2026-11-02'),E(7,'Chose which of two pilot schools went first on the day the question came up, and told both why.','2026-10-29'),E(8,'Ran the employer briefing as three short calls when the room fell through. All eleven still attended.','2026-10-30'),E(7,'Had the one-to-one I had been putting off. Set the standard, a date and what happens if it is missed.','2026-10-28'),E(8,'Phoned every partner about the date change and asked each one to say back what they would do.','2026-11-03'),E(9,'Took on the careers fair stand nobody owned and had it staffed within the week.','2026-10-27')]),
+    james:map([E(8,'Stayed level in the Monday meeting the morning the partner withdrew. The team left with a plan.','2026-11-02'),E(8,'Made the pilot call herself and told me afterwards. I heard the decision and the result together.','2026-10-29'),E(8,'Three short calls in place of the lost room. Simple fix, same turnout.','2026-10-30'),E(7,'Had the conversation within the week, direct, with a date. First time I have not had to prompt it.','2026-10-28'),E(8,'Partners knew the new date before I did. No one had to ask twice.','2026-11-03'),E(8,'Picked up the careers fair stand. Good pace all month.','2026-10-27')]),
+    agreed:map([8,8,8,7,8,9]),focus:'decisiveness',asg:2,due:'2026-12-09'}),
+  tom:H('tom','Tom Ashby','Programmes',[
+    m('06',[7,7,7,6,7,9]),m('07',[7,8,8,6,7,9]),m('08',[7,8,7,6,7,9]),m('09',[6,7,7,6,7,9]),m('10',[6,7,6,6,7,8],'resilience',0,'2026-11-10')],
+   {selfAt:'2026-11-09',step:6,
+    self:map([E(7,'Lost two tutors in the same week. Kept every session running and nothing was cancelled.','2026-11-03'),E(8,'Moved the cohort start by a week on the day the room fell through, and told everyone by phone.','2026-11-05'),E(7,'Covered the tutor gap by pairing two groups for the practical sessions.','2026-11-04'),E(6,'Raised the late marking with one tutor, but a week after I first noticed it.','2026-11-06'),E(8,'Ran a short stand-up every morning that week so everyone knew the plan for the day.','2026-11-03'),E(9,'Stayed late three nights to get the new cohort packs ready so the start date held.','2026-11-07')])}),
+  elena:H('elena','Elena Marsh','Learner Services',[
+    m('08',[6,5,6,7,6,7]),m('09',[7,5,6,7,6,7]),m('10',[7,6,7,7,6,7],'communication',0,'2026-11-10')],{}),
+  dev:H('dev','Dev Okafor','Operations',[
+    m('06',[8,7,8,7,7,6]),m('07',[8,7,8,7,7,6]),m('08',[8,8,8,7,7,7]),m('09',[8,8,9,7,7,7]),m('10',[8,8,9,8,7,7],'enthusiasm',0,'2026-11-10')],
+   {selfAt:'2026-11-08',jamesAt:'2026-11-10',step:6,
+    self:map([E(7,'The system outage threw me for most of a morning before I got the team back on a plan.','2026-11-04'),E(7,'Took two days to decide on the supplier when I had what I needed after one.','2026-11-02'),E(8,'Used the old booking sheet as a manual fallback during the outage. No bookings were lost.','2026-11-04'),E(6,'Let a missed handover slide once before I picked it up with the person.','2026-11-05'),E(6,'Sent the rota change by email and two people missed it. I should have phoned.','2026-11-06'),E(6,'Only told one person this month exactly what they had done well.','2026-11-07')]),
+    james:map([E(8,'Outage morning. He was calm in front of the team and had a fallback running inside the hour.','2026-11-04'),E(8,'Supplier decision made and closed within the week, with the contract chased to signature.','2026-11-03'),E(9,'The manual booking fallback. Two other heads have since copied it.','2026-11-04'),E(8,'Picked up the missed handover the next morning, direct, with a date for the fix.','2026-11-05'),E(7,'Rota change went by email, but he checked with each shift lead the same afternoon.','2026-11-06'),E(7,'Thanked the night team by name in the all-hands for the outage cover.','2026-11-07')])}),
+  hannah:H('hannah','Hannah Reid','Events',[],{})
+ }};
+}
+const TOM_SAMPLE=[E(5,'The week the tutors left, the team told me they were keeping out of his way. Sessions ran, but the room was flat.','2026-11-04',true),E(7,'Moved the cohort start the same day and phoned everyone. Clean decision, closed.','2026-11-05'),E(5,'Pairing the groups was my suggestion on the Wednesday. He came to me with the problem and no options.','2026-11-04'),E(6,'Late marking was raised, a week on. Direct once it happened.','2026-11-06'),E(6,'Stand-ups were good. But two tutors only learned about the start date change from learners.','2026-11-05'),E(8,'Real graft on the cohort packs. The start date held because of him.','2026-11-07')];
+
+/* ---------- state ---------- */
+let S, ui={menu:false,modal:null,open:null,mopen:null};
+const KEY='sccu-pillars-demo-v3';
+function load(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.v===3)return r}catch(e){}return seed()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+S=load();
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const isHead=()=>S.role!=='james'&&S.role!=='scott';
+const me=()=>S.heads[S.role];
+const first=h=>h.name.split(' ')[0];
+const full=e=>!!(e&&e.s&&e.d&&e.ex&&e.ex.trim().length>=8);
+const allFull=o=>P.every(p=>full(o[p.id]));
+function latest(h){ if(h.cur.done) return {m:NOW,ag:P.map(p=>h.cur.agreed[p.id])}; return h.hist[h.hist.length-1]||null }
+function previous(h){ if(h.cur.done) return h.hist[h.hist.length-1]||null; return h.hist[h.hist.length-2]||null }
+function series(h){ const a=h.hist.map(x=>({m:x.m,ag:x.ag})); if(h.cur.done)a.push({m:NOW,ag:P.map(p=>h.cur.agreed[p.id])}); return a }
+function asgText(h){const c=h.cur; if(c.asg==null||!c.focus)return ''; return c.asg==='own'?c.asgOwn:P[PI[c.focus]].asg[c.asg].t}
+function status(h){const c=h.cur;
+ if(c.done)return{k:'done',t:'Session done',cls:'ok'};
+ if(c.revealed)return{k:'live',t:'In session',cls:'grad'};
+ if(c.selfAt&&c.jamesAt)return{k:'ready',t:'Ready to reveal',cls:'grad'};
+ if(c.selfAt)return{k:'score',t:'Self-scored',cls:'sea'};
+ if(c.jamesAt)return{k:'wait',t:'Waiting for self-score',cls:''};
+ return{k:'none',t:'Not started',cls:''}}
+const gap=(h,p)=>Math.abs(h.cur.self[p.id].s-h.cur.james[p.id].s);
+const byGap=h=>P.slice().sort((a,b)=>gap(h,b)-gap(h,a));
+const pct=v=>((v-1)/9*100);
+
+/* ---------- small pieces ---------- */
+function anchorHTML(p,v){
+ const one=(n,cap,far)=>`<div class="anc ${far?'far':''}">${cap?`<small>${cap}</small>`:''}<p>${esc(p.anc[n])}</p></div>`;
+ const std=n=>n===7?'The standard for a head at SCCU':'';
+ if(!v)return `<p class="anc-empty">Drag the marker to where you were this month. The description changes as you move.</p>`;
+ if(v<3)return one(3,'Further back than this',1);
+ if(v>9)return one(9,'Further on than this, every week',0);
+ if(v%2)return one(v,std(v));
+ return one(v-1,'More than this'+(v-1===7?' · the standard for a head at SCCU':''))+one(v+1,'Not yet this'+(v+1===7?' · the standard for a head at SCCU':''));
+}
+const ancCls=v=>'anchor'+(v&&v>=3&&v<=9&&v%2===0?' two':'');
+function slider(ctx,hid,pid,v,sm,lock){
+ const dots=Array.from({length:10},(_,i)=>`<b class="sl-dot" style="left:${i/9*100}%"></b>`).join('');
+ return `<div class="sl ${ctx==='james'?'james':''} ${v?'':'unset'} ${sm?'sm':''} ${lock?'lock':''}" role="slider" tabindex="${lock?-1:0}" aria-valuemin="1" aria-valuemax="10" ${v?`aria-valuenow="${v}"`:''} aria-label="${esc(P[PI[pid]].opp)} to ${esc(P[PI[pid]].name)}, 1 to 10" data-sl="${ctx}" data-h="${hid}" data-p="${pid}">
+  <div class="sl-track"><div class="sl-fill" style="width:${v?pct(v):0}%"></div>${dots}</div>
+  <div class="sl-thumbwrap"><div class="sl-thumb" style="left:${v?pct(v):50}%"><span>${v||'‹ ›'}</span></div></div></div>`;
+}
+function mini(marks,std){ // marks:[{v,c,l}]
+ return `<div class="mini"><i></i>${std?`<b class="std" style="left:${pct(STD)}%"></b>`:''}${marks.map(k=>{const tw=k.c!=='a'&&marks.some(o=>o!==k&&o.c!=='a'&&o.v===k.v);return `<b class="mk ${k.c}" style="left:${pct(k.v)}%${tw?';transform:translateX('+(k.c==='h'?-10:10)+'px)':''}">${k.l}</b>`}).join('')}</div>`}
+function radar(cur,prev,o={}){
+ const S_=o.size||420,c=S_/2,R=S_*0.33;
+ const pt=(i,v)=>{const a=(-90+i*60)*Math.PI/180;return [c+Math.cos(a)*R*v/10,c+Math.sin(a)*R*v/10]};
+ const poly=a=>a.map((v,i)=>pt(i,v).map(n=>n.toFixed(1)).join(',')).join(' ');
+ const rings=[2,4,6,8,10].map(r=>`<polygon points="${poly(Array(6).fill(r))}" fill="none" stroke="rgba(255,255,255,.09)"/>`).join('');
+ const spokes=P.map((_,i)=>{const[x,y]=pt(i,10);return `<line x1="${c}" y1="${c}" x2="${x}" y2="${y}" stroke="rgba(255,255,255,.09)"/>`}).join('');
+ const labels=P.map((p,i)=>{const side=i%3!==0;const[x,y]=pt(i,o.tight?(side?11.6:12):12.4);const an=Math.abs(x-c)<8?'middle':x>c?'start':'end';
+  return `<text x="${x}" y="${y}" text-anchor="${an}" dominant-baseline="middle">${p.name}${cur?`<tspan class="s" dx="6">${cur[i]}</tspan>`:''}</text>`}).join('');
+ return `<svg class="radar" viewBox="${o.tight?-S_*0.26:-S_*0.14} ${o.tight?S_*0.04:0} ${o.tight?S_*1.52:S_*1.28} ${o.tight?S_*0.92:S_}" width="100%" role="img" aria-label="Six pillar shape">
+  <defs><linearGradient id="rg${o.id||''}" x1="0" x2="1"><stop offset="0" stop-color="#6c3481"/><stop offset="1" stop-color="#c32e81"/></linearGradient></defs>
+  ${rings}${spokes}
+  ${o.std!==false?`<polygon points="${poly(Array(6).fill(STD))}" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.5" stroke-dasharray="2 5" stroke-linecap="round"/>`:''}
+  ${prev?`<polygon points="${poly(prev)}" fill="none" stroke="rgba(255,255,255,.38)" stroke-width="1.5"/>`:''}
+  ${cur?`<polygon ${o.anim&&prev?`data-radar data-from="${prev.join(',')}" data-to="${cur.join(',')}" data-size="${S_}"`:''} points="${poly(o.anim&&prev?prev:cur)}" fill="url(#rg${o.id||''})" fill-opacity=".42" stroke="url(#rg${o.id||''})" stroke-width="2.5" stroke-linejoin="round"/>`:''}
+  ${labels}</svg>`;
+}
+function animRadar(){
+ const el=document.querySelector('[data-radar]'); if(!el)return;
+ const from=el.dataset.from.split(',').map(Number),to=el.dataset.to.split(',').map(Number),S_=+el.dataset.size,c=S_/2,R=S_*0.33;
+ if(matchMedia('(prefers-reduced-motion:reduce)').matches){draw(1);return}
+ const t0=performance.now()+350;
+ function draw(k){el.setAttribute('points',from.map((f,i)=>{const v=f+(to[i]-f)*k,a=(-90+i*60)*Math.PI/180;return (c+Math.cos(a)*R*v/10).toFixed(1)+','+(c+Math.sin(a)*R*v/10).toFixed(1)}).join(' '))}
+ (function step(t){let k=Math.min(1,Math.max(0,(t-t0)/800));k=1-Math.pow(1-k,3);draw(k);if(k<1)requestAnimationFrame(step)})(performance.now());
+}
+function spark(vals){
+ const w=140,h=34,n=vals.length; if(!n)return '';
+ const x=i=>n===1?w-6:6+i*(w-12)/(n-1), y=v=>h-4-(v-1)/9*(h-8);
+ const d=vals.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
+ return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true"><line x1="0" x2="${w}" y1="${y(STD)}" y2="${y(STD)}" stroke="rgba(255,255,255,.3)" stroke-dasharray="2 4"/>${n>1?`<path d="${d} L${x(n-1)} ${h} L${x(0)} ${h} Z" fill="rgba(195,46,129,.16)"/><path d="${d}" fill="none" stroke="#c32e81" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`:''}<circle cx="${x(n-1)}" cy="${y(vals[n-1])}" r="4" fill="#fff"/></svg>`}
+
+/* ---------- shell ---------- */
+function routes(){return S.role==='james'?[['team','Team'],['session','Session'],['profile','Profiles'],['model','The Model']]:S.role==='scott'?[['team','Team'],['profile','Profiles'],['model','The Model']]:[['self-score','Self-score'],['profile','My profile'],['summary','Session summary'],['model','The Model']]}
+function route(){const r=(location.hash||'').slice(1);const ok=routes().map(x=>x[0]).concat(S.role==='james'?['summary']:[]);return ok.includes(r)?r:routes()[0][0]}
+function whoHTML(){
+ const r=S.role, n=r==='james'?'James Pease':r==='scott'?'Scott Riddell':me().name, t=r==='james'?'COO':r==='scott'?'CEO':'Head of '+me().dept, a=r==='james'?'j':r==='scott'?'s':'h', ini=n.split(' ').map(w=>w[0]).join('');
+ const item=(id,name,sub,cls)=>`<button data-a="role" data-id="${id}" class="${S.role===id?'on':''}"><i class="av ${cls}" style="font-style:normal">${name.split(' ').map(w=>w[0]).join('')}</i><span>${name}<small>${sub}</small></span></button>`;
+ return `<button class="who" data-a="menu" aria-expanded="${ui.menu}"><i class="av ${a}" style="font-style:normal">${ini}</i><span>${n}<small>Viewing as ${t}</small></span></button>
+ ${ui.menu?`<div class="menu"><p class="eyebrow">View the tool as</p>${item('james','James Pease','COO. Runs the sessions','j')}${item('scott','Scott Riddell','CEO. Sees the team picture','s')}<hr><p class="eyebrow">Sample heads</p>${Object.values(S.heads).map(h=>item(h.id,h.name,h.dept+'. '+status(h).t,'h')).join('')}<hr><button data-a="reset"><span>Reset the demo<small>Puts every sample head back to the start</small></span></button></div>`:''}`;
+}
+function render(){
+ const r=route();
+ const views={model:vModel,'self-score':vSelf,session:vSession,profile:vProfile,team:vTeam,summary:vSummary};
+ document.getElementById('app').innerHTML=`<header class="top"><div class="top-in">
+  <a class="brand" href="#${routes()[0][0]}"><small>SCCU GROUP</small><b>Leadership Pillars</b></a>
+  <nav class="nav" aria-label="Views">${routes().map(([k,l])=>`<a href="#${k}" class="${k===r?'on':''}">${l}</a>`).join('')}</nav>
+  <div class="top-r"><span class="pill">Sample data</span>${whoHTML()}</div></div></header>
+  <main>${views[r]()}</main>${modal()}`;
+ gates(); animRadar();
+ if(document.querySelector('.rv.pre[data-auto]'))requestAnimationFrame(()=>requestAnimationFrame(()=>{const e=document.querySelector('.rv');if(e){e.classList.remove('pre');e.classList.add('go');e.querySelectorAll('[data-to]').forEach(m=>m.style.left=m.dataset.to+'%')}}));
+}
+
+/* ---------- modal ---------- */
+function modal(){
+ if(ui.modal==='chooser')return `<div class="ov" data-a="close"><div class="dlg" role="dialog" aria-label="One case, one pillar"><p class="eyebrow">One case, one pillar</p><h2>Which pillar is it?</h2><p>Every example sits under one pillar only. Find what happened and log it there.</p><table>${CHOOSER.map(c=>`<tr><td>${c[0]}</td><td>${c[1]}</td></tr>`).join('')}</table><div class="dlg-x"><button class="btn" data-a="close">Got it</button></div></div></div>`;
+ if(ui.modal==='how')return `<div class="ov" data-a="close"><div class="dlg" role="dialog" aria-label="How to use it"><p class="eyebrow">How to use it</p><h2>Six pillars. One honest conversation a month.</h2>
+ <p>This is how we talk about leadership at SCCU. There are six pillars. Each one runs from its opposite to the pillar itself, 1 to 10. Once a month you score yourself, James scores you, and the two of you sit down and compare.</p>
+ <h3>Your score is this month</h3><p>A score says where you were this month, based on what happened this month. Next month it starts again. A hard month can drop a number and a good month brings it back. Nobody is a 5. Score what happened.</p>
+ <h3>You score first</h3><p>Before the session, move each slider to where you were this month. Read the description as it moves and stop on the one that sounds like your month. James can't see your scores until his own are in, and you can't see his until you've submitted yours.</p>
+ <h3>One example for every score</h3><p>Every score needs one real thing that happened, with a date. No example, no score. That goes for strong scores as much as low ones.</p>
+ <h3>One case, one pillar</h3><p>When something happens, it counts on one pillar only. Pick the one that fits best. One bad day should never cost you three scores.</p>
+ <h3>The gap is the conversation</h3><p>Your number and James's sit side by side. They are never averaged. Where they're furthest apart is where you start talking. Sometimes James will have you higher than you have yourself. You agree the score together in the room.</p>
+ <h3>Who sees your scores</h3><p>You see your own. James and Scott see every head's.</p>
+ <h3>One focus, one assignment</h3><p>You leave with one pillar to work on and one real task to do in the job before next month. Next month opens with how it went.</p>
+ <div class="dlg-x"><button class="btn" data-a="close">Close</button></div></div></div>`;
+ return '';
+}
+
+/* ---------- The Model ---------- */
+function vModel(){
+ if(ui.mopen){const p=P[PI[ui.mopen]],jx=S.jx[p.id]||'';
+  return `<div class="ptabs"><button data-a="mopen" data-id="">← All six</button>${P.map(x=>`<button data-a="mopen" data-id="${x.id}" class="${x.id===p.id?'on':''}">${x.name}</button>`).join('')}</div>
+  <div class="mdet"><div>
+   <p class="eyebrow">Pillar ${PI[p.id]+1} of 6</p>
+   <div class="bigspec"><span class="o">${p.opp}</span><span class="ln"></span><span class="p">${p.name}</span></div>
+   <p class="def">${esc(p.def)}.</p>
+   <div class="tl">${p.traits.map(t=>`<div><b>${t.n}</b><span>${esc(t.d)}</span></div>`).join('')}</div>
+   <div class="fake"><p class="eyebrow">Looks like it but isn't</p><p>${esc(p.fake)}.</p></div>
+   <div class="box"><p class="eyebrow">Worked example</p><p>${esc(p.ex.s)}</p><p>${esc(p.ex.r)}</p></div>
+   <div class="box"><p class="eyebrow">James's example</p>${S.role==='james'?`<p><textarea id="jx-${p.id}" data-jx="${p.id}" placeholder="Write the example you use when you explain ${p.name} to a head.">${esc(jx)}</textarea></p><p class="hint">Saves as you type, and stays when you reset the demo. Heads see this on the pillar page.</p>`:jx?`<p>${esc(jx)}</p>`:`<p class="empty">James will add his own example here.</p>`}</div>
+  </div><div>
+   <p class="eyebrow" style="margin-bottom:14px">What it looks like</p>
+   <div class="ladder">${[9,7,5,3].map(n=>`<div class="rung"><span class="n">${n}</span><div>${n===7?'<small>The standard for a head at SCCU</small>':''}<p>${esc(p.anc[n])}</p></div></div>`).join('')}</div>
+   <div class="box"><p class="eyebrow">Questions James may ask</p>${p.traits.map(t=>`<p><b style="color:#fff">${t.n}.</b> ${esc(t.q[0])}</p>`).join('')}</div>
+  </div></div>`}
+ return `<div class="page-h"><div><p class="eyebrow">The Model</p><h1>Six pillars. Each one runs from its opposite.</h1><p class="lead">Scored 1 to 10 once a month. Three traits sit under each pillar. They are never scored. They are the questions that explain the number.</p></div><button class="btn ghost" data-a="modal" data-id="how">How to use it</button></div>
+ <div class="pgrid">${P.map(p=>`<button class="pcard" data-a="mopen" data-id="${p.id}"><span class="opp">${p.opp} →</span><h2>${p.name}</h2><p>${esc(p.def)}.</p><span class="traits">${p.traits.map(t=>`<span class="chip">${t.n}</span>`).join('')}</span></button>`).join('')}</div>`;
+}
+
+/* ---------- Self-score (head) ---------- */
+function dupOf(h,pid){const t=(h.cur.self[pid]?.ex||'').trim().toLowerCase();if(t.length<8)return null;const o=P.find(p=>p.id!==pid&&(h.cur.self[p.id]?.ex||'').trim().toLowerCase()===t);return o?o.name:null}
+function selfMissing(h,pid){const e=h.cur.self[pid]||{};const d=dupOf(h,pid);
+ if(d)return `You've used this example on ${d}. One case, one pillar.`;
+ if(!e.s)return 'Move the marker to set your score.';
+ if(!e.ex||e.ex.trim().length<8)return 'Add one thing that happened. No example, no score.';
+ if(!e.d)return 'Add the date it happened.';return ''}
+function vSelf(){
+ const h=me(),c=h.cur,last=h.hist[h.hist.length-1];
+ if(c.done)return `<div class="intro"><p class="eyebrow">${mName(NOW)} 2026</p><h1>This month's session is done.</h1><p class="muted" style="font-size:18px">You and James agreed your scores on ${fDateL(c.sessionDate)}. Self-scoring opens again next month.</p><div class="snav" style="justify-content:flex-start"><a class="btn" href="#summary">Open the session summary</a><a class="btn ghost" href="#profile">See my profile</a></div></div>`;
+ if(c.selfAt)return `<div class="stage"><p class="eyebrow">${mName(NOW)} 2026 · Submitted ${fDate(c.selfAt)}</p><h1 style="font-size:clamp(28px,3.6vw,42px);margin:12px 0 10px">Your scores are in and locked.</h1>
+  <div class="hidden-note" style="margin:22px 0"><span class="lockic">🔒</span><span>${c.jamesAt?"James's scores are in too. You'll both see them together in the session.":"James hasn't scored yet. His scores stay hidden from you, and yours from him, until you sit down together."}</span></div>
+  ${P.map(p=>{const e=c.self[p.id];return `<div class="rrow"><div><small>${p.opp} to</small><h3>${p.name}</h3></div><div>${mini([{v:e.s,c:'h',l:e.s}])}<p>${esc(e.ex)} <span class="dim">${fDate(e.d)}</span></p></div></div>`}).join('')}</div>`;
+ if(c.step<0){const fresh=!h.hist.length;
+  return `<div class="intro"><p class="eyebrow">${mName(NOW)} 2026 · Self-score</p><h1>${fresh?`Welcome, ${first(h)}. This is your first one.`:`Where were you this month, ${first(h)}?`}</h1>
+  <p class="muted" style="font-size:18px">${fresh?'Once a month you score yourself on six pillars, James scores you, and the two of you compare. It takes about ten minutes.':'Six pillars. About ten minutes. Score what happened this month.'}</p>
+  <ul><li><b>Your score is this month.</b>A hard month can drop a number and a good month brings it back. Nobody is a 5.</li><li><b>One example for every score.</b>One real thing that happened, with a date. No example, no score.</li><li><b>James can't see yours until his are in.</b>And you can't see his until you've submitted.</li><li><b>This is for your development.</b>You see your own scores. James and Scott see every head's.</li></ul>
+  ${last&&last.asg?`<div class="card" style="margin-bottom:28px"><p class="eyebrow">Your assignment from ${mName(last.m)}</p><p style="margin-top:8px">${esc(last.asg)}</p><p class="hint" style="margin-top:8px">The session opens with how this went. Have your example ready.</p></div>`:''}
+  <div class="snav" style="justify-content:flex-start;margin-top:0"><button class="btn" data-a="ss-go" data-id="0">Start scoring</button><button class="btn ghost" data-a="modal" data-id="how">How it works</button></div></div>`}
+ const tabs=`<div class="ptabs">${P.map((p,i)=>`<button data-a="ss-go" data-id="${i}" class="${i===c.step?'on':''} ${full(c.self[p.id])?'done':''}">${p.name}</button>`).join('')}<button data-a="ss-go" data-id="6" class="${c.step===6?'on':''}">Review</button></div>`;
+ if(c.step>=6){const ok=allFull(c.self)&&!P.some(p=>dupOf(h,p.id));
+  return `<div class="stage">${tabs}<p class="eyebrow">Review</p><h1 style="font-size:clamp(28px,3.6vw,42px);margin:12px 0 6px">Your six scores for ${mName(NOW)}.</h1><p class="muted">Read them back. If one doesn't sound like your month, change it now.</p>
+  <div style="margin-top:22px">${P.map((p,i)=>{const e=c.self[p.id];return `<div class="rrow"><div><small>${p.opp} to</small><h3>${p.name}</h3><button class="link" data-a="ss-go" data-id="${i}" style="margin-top:8px">${full(e)?'Change':'Finish this one'}</button></div><div>${e&&e.s?mini([{v:e.s,c:'h',l:e.s}]):'<p class="hint bad">Not scored yet.</p>'}${e&&e.ex?`<p>${esc(e.ex)} <span class="dim">${fDate(e.d)}</span></p>`:''}</div></div>`}).join('')}</div>
+  <div class="snav"><span class="hint">${ok?"Once you submit, your scores lock. James's stay hidden until you're in the room together.":'Finish all six to submit.'}</span><button class="btn" data-a="ss-submit" ${ok?'':'disabled'}>Submit and lock</button></div></div>`}
+ const p=P[c.step],e=c.self[p.id]||{},v=e.s;
+ return `<div class="stage" data-slwrap>${tabs}
+  <p class="eyebrow">Pillar ${c.step+1} of 6 · ${mName(NOW)}</p>
+  <p class="def" style="margin-top:10px">${esc(p.def)}.</p>
+  <div class="words"><span class="wo" data-wo style="opacity:${v?1-(v-1)/9*.7:.6}">${p.opp}</span><span data-wp style="opacity:${v?.3+(v-1)/9*.7:.6}">${p.name}</span></div>
+  ${slider('self',h.id,p.id,v)}
+  <div class="${ancCls(v)}" data-anchor aria-live="polite">${anchorHTML(p,v)}</div>
+  <div class="evi"><div><label class="fl" for="ex-${p.id}">What happened this month that puts you here?</label><textarea id="ex-${p.id}" data-f="self" data-h="${h.id}" data-p="${p.id}" data-k="ex" placeholder="One real thing that happened. What you did, and what came of it.">${esc(e.ex||'')}</textarea></div>
+   <div><label class="fl" for="d-${p.id}">When</label><input type="date" id="d-${p.id}" min="2026-10-12" max="${TODAY}" value="${e.d||''}" data-f="self" data-h="${h.id}" data-p="${p.id}" data-k="d"></div>
+   <div class="full"><span class="hint">One example, one pillar. Use it here only.</span><button class="link" data-a="modal" data-id="chooser">Not sure which pillar it belongs to?</button></div></div>
+  <div class="snav"><button class="btn ghost" data-a="ss-go" data-id="${c.step-1}">Back</button><span class="hint" data-hint="self"></span><button class="btn" data-a="ss-go" data-id="${c.step+1}" data-gate="self" data-p="${p.id}">${c.step<5?'Next: '+P[c.step+1].name:'Review all six'}</button></div></div>`;
+}
+
+/* ---------- Session (James) ---------- */
+function stageOf(h){const c=h.cur; if(c.done)return 'summary'; if(!c.jamesAt)return 'score'; if(!c.selfAt)return 'wait'; if(!c.revealed)return 'reveal'; return c.stage||'explore'}
+function rail(h,st){
+ const c=h.cur,ag=P.filter(p=>c.agreed[p.id]).length;
+ const idx={score:1,wait:1,reveal:2,explore:ag===6?4:3,focus:c.focus?6:5,summary:8}[st];
+ const steps=[`${first(h)} self-scores`,'Your scores','Reveal','Explore the gaps','Agree each score','Pick one focus','Set the assignment','Summary'];
+ const done=i=>i===0?!!c.selfAt:i===1?!!c.jamesAt:i<idx;
+ return `<aside class="rail">${steps.map((s,i)=>`<div class="st ${done(i)?'done':''} ${i===idx&&!done(i)||(!c.selfAt&&i===0&&st==='wait')?'on':''}"><i>${done(i)?'✓':i+1}</i>${s}</div>`).join('')}
+ <div class="clock"><p class="eyebrow">Session clock</p><b class="num" data-clock data-s="${c.startedAt||''}" data-e="${c.endedAt||''}">${c.startedAt?'':'00:00'}</b><span class="hint">Aim for about 20 minutes</span></div></aside>`}
+function vSession(){
+ const h=S.heads[S.headId]||S.heads.tom,c=h.cur,st=stageOf(h);
+ const pick=`<div class="hpick">${Object.values(S.heads).map(x=>`<button data-a="head" data-id="${x.id}" class="${x.id===h.id?'on':''}"><i class="av h" style="font-style:normal">${x.ini}</i>${x.name} <span class="dim" style="font-weight:600">· ${status(x).t}</span></button>`).join('')}</div>`;
+ const head=`<div class="page-h" style="margin-bottom:22px"><div><p class="eyebrow">${mName(NOW)} session · ${h.dept}</p><h1>${h.name}</h1></div><div class="legend"><span><i style="background:var(--sea)"></i>${first(h)}</span><span><i style="background:var(--pink)"></i>You</span><span><i style="background:var(--grad)"></i>Agreed</span>${c.revealed?'<span><i style="width:2px;height:14px;border-radius:0;background:rgba(255,255,255,.6)"></i>The standard</span>':''}</div></div>`;
+ let body='';
+ if(st==='score'){
+  body=`<div class="hidden-note"><span class="lockic">🔒</span><span>${c.selfAt?`${first(h)} submitted on ${fDate(c.selfAt)}. Those scores stay hidden until yours are locked.`:`${first(h)} hasn't self-scored yet. You can still enter yours. Nothing is revealed until both sets are in.`}</span></div>
+  <div style="display:flex;justify-content:space-between;gap:16px;align-items:baseline;flex-wrap:wrap;margin:22px 0 4px"><h2 style="font-size:24px">Your scores for ${first(h)}</h2>${h.id==='tom'?'<button class="btn ghost sm" data-a="j-fill">Fill sample scores (demo only)</button>':''}</div>
+  <p class="muted">Where was ${first(h)} this month? One dated example for each. Tick overdone if you saw too much of a pillar.</p>
+  ${P.map(p=>{const e=c.james[p.id]||{};return `<div class="jrow" data-slwrap><div><span class="o">${p.opp} to</span><h3>${p.name}</h3><label class="chk"><input type="checkbox" id="ov-${p.id}" data-over="${p.id}" ${e.over?'checked':''}>Overdone</label><p class="fakeline" data-fake style="display:${e.over?'block':'none'}">Looks like it but isn't: ${esc(p.fake).toLowerCase()}.</p></div>
+   <div>${slider('james',h.id,p.id,e.s,true)}<div class="${ancCls(e.s)}" data-anchor>${e.s?anchorHTML(p,e.s):'<p class="anc-empty">Set a score to see the description.</p>'}</div>
+   <div class="evi"><div><textarea id="jex-${p.id}" aria-label="Your example for ${p.name}" data-f="james" data-h="${h.id}" data-p="${p.id}" data-k="ex" placeholder="What did you see? One real example." style="min-height:64px">${esc(e.ex||'')}</textarea></div><div><input type="date" id="jd-${p.id}" aria-label="Date of your example for ${p.name}" min="2026-10-12" max="${TODAY}" value="${e.d||''}" data-f="james" data-h="${h.id}" data-p="${p.id}" data-k="d"></div></div></div></div>`}).join('')}
+  <div class="snav"><span class="hint" data-hint="james"></span><button class="btn" data-a="j-lock" data-gate="james">Lock my scores</button></div>`;
+ } else if(st==='wait'){
+  body=`<div class="blank"><h2>Your scores are locked.</h2><p>${first(h)} hasn't self-scored yet. The reveal opens as soon as ${first(h)} submits. Nothing is visible to either of you until then.</p><p class="hint">For the demo: switch to ${h.name} from the menu top right, complete the self-score, then come back.</p></div>`;
+ } else if(st==='reveal'){
+  const last=h.hist[h.hist.length-1];
+  body=`${last&&last.asg?`<div class="card" style="margin-bottom:16px"><p class="eyebrow">Open with last month · ${P[PI[last.focus]].name}</p><p style="margin:8px 0 4px">${esc(last.asg)}</p><p class="open-line" style="font-size:17px;margin:12px 0">How did the assignment go? What did you do, on what date, and what changed?</p><div class="agree">${[['done','Done'],['part','Partly'],['no','Not done']].map(([k,l])=>`<button style="width:auto;padding:0 16px" class="${c.review===k?'on':''}" data-a="review" data-id="${k}">${l}</button>`).join('')}</div></div>`:''}
+  <div class="rv-cta"><p class="eyebrow">Both sets are in</p><h2>${first(h)} scored on ${fDate(c.selfAt)}. You scored on ${fDate(c.jamesAt)}.</h2><p class="muted" style="max-width:52ch">Neither of you has seen the other's numbers. Turn the screen so you can both see it.</p><button class="btn" data-a="reveal">Reveal both sets</button></div>
+  <div class="rv pre">${P.map(p=>`<div class="rv-row"><div><span class="o">${p.opp} to</span><h3>${p.name}</h3></div><div class="rv-track"><i></i></div><div></div></div>`).join('')}</div>`;
+ } else if(st==='explore'){
+  const order=byGap(h),ag=P.filter(p=>c.agreed[p.id]).length,big=order[0],same=order.filter(p=>gap(h,p)===0);
+  const prompts=LINKS.filter(l=>c.agreed[l.a]&&c.agreed[l.b]&&c.agreed[l.a]<STD&&c.agreed[l.b]<STD);
+  const fresh=ui.justRevealed; ui.justRevealed=false;
+  body=`<div class="rv ${fresh?'pre':'go'}" ${fresh?'data-auto':''} style="margin-bottom:26px"><div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:baseline"><h2 style="font-size:24px">Biggest gap: ${big.name}. ${first(h)} has ${c.self[big.id].s}, you have ${c.james[big.id].s}.</h2><span class="hint">${same.length?'You agree on '+same.map(p=>p.name).join(' and ')+'.':'Sorted by the size of the gap.'}</span></div>
+   ${order.map((p,i)=>{const a=c.self[p.id].s,b=c.james[p.id].s,g=Math.abs(a-b),lo=Math.min(a,b);return `<div class="rv-row" style="padding:14px 0"><div><span class="o">${p.opp} to</span><h3>${p.name}</h3></div>
+    <div class="rv-track"><i></i><b class="std" style="left:${pct(STD)}%"></b><b class="rv-gap" style="left:${pct(lo)}%;width:${g/9*100}%;transition-delay:${.5+i*.2}s"></b>
+     <b class="rv-mk h" style="left:${fresh?0:pct(a)}%;transition-delay:${i*.2}s" data-to="${pct(a)}">${a}</b><b class="rv-mk j" style="left:${fresh?100:pct(b)}%;transition-delay:${i*.2}s" data-to="${pct(b)}">${b}</b></div>
+    <div class="rv-g" style="transition-delay:${.7+i*.2}s">${g?g:'='}<small>${g?'Gap':'Agreed'}</small></div></div>`}).join('')}</div>
+  ${prompts.map(l=>`<div class="prompt"><small>${P[PI[l.a]].name} and ${P[PI[l.b]].name} are linked</small>${esc(l.t)}</div>`).join('')}
+  <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:14px"><h2 style="font-size:22px">Explore, then agree each score</h2><span class="hint">${ag} of 6 agreed</span></div>
+  ${order.map(p=>{const s=c.self[p.id],j=c.james[p.id],g=gap(h,p),open=ui.open===p.id,av=c.agreed[p.id];
+   const line=s.s>j.s?"What situations are you basing that on, and what's your evidence?":j.s>s.s?"I've got you higher than you've got yourself. Here's what I saw.":"We've landed in the same place. Which example would you pick?";
+   return `<div class="xc"><button class="xc-h" data-a="xopen" data-id="${p.id}" aria-expanded="${open}"><h3>${p.name}</h3>${mini([{v:s.s,c:'h',l:s.s},{v:j.s,c:'j',l:j.s}].concat(av?[{v:av,c:'a',l:av}]:[]),true)}<span style="display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap">${j.over?'<span class="chip warn">Overdone</span>':''}${av?`<span class="chip grad">Agreed ${av}</span>${av<STD?'<span class="chip warn">Below standard</span>':''}`:`<span class="chip">${g?'Gap '+g:'Same score'}</span>`}</span></button>
+   ${open?`<div class="xc-b"><p class="open-line">${line}</p>
+    <div class="two"><div class="ev"><small>${first(h)}'s example · ${fDate(s.d)}</small><p>${esc(s.ex)}</p></div><div class="ev j"><small>Your example · ${fDate(j.d)}</small><p>${esc(j.ex)}</p></div></div>
+    ${j.over?`<p class="fakeline" style="margin:0">Overdone. Looks like ${p.name} but isn't: ${esc(p.fake).toLowerCase()}.</p>`:''}
+    <div class="qs">${p.traits.map(t=>`<div class="q"><b>${t.n}</b><em>${esc(t.d)}</em><ul>${t.q.map(q=>`<li>${esc(q)}</li>`).join('')}</ul></div>`).join('')}</div>
+    <div><p class="eyebrow" style="margin-bottom:10px">Agreed score</p><div class="agree">${Array.from({length:10},(_,i)=>i+1).map(n=>`<button class="${av===n?'on':''}" data-a="agree" data-p="${p.id}" data-id="${n}" aria-label="Agree ${n}">${n}${s.s===n?'<u class="h"></u>':''}${j.s===n?'<u class="j"></u>':''}</button>`).join('')}</div>
+    ${av?`<div class="${ancCls(av)}" style="min-height:0;margin-top:22px">${anchorHTML(p,av)}</div>`:'<p class="hint" style="margin-top:18px">Never the average. Agree it in the room: reinforce, challenge, or say you think they are higher.</p>'}</div>
+    <div><button class="link" data-a="modal" data-id="chooser">One case, one pillar: which pillar is it?</button></div></div>`:''}</div>`}).join('')}
+  <div class="snav"><span class="hint">${ag<6?'Agree all six to move on.':''}</span><button class="btn" data-a="stage" data-id="focus" ${ag<6?'disabled':''}>Next: pick one focus</button></div>`;
+ } else if(st==='focus'){
+  const sug=suggest(h),f=c.focus,fp=f?P[PI[f]]:null,link=LINKS.find(l=>c.agreed[l.a]<STD&&c.agreed[l.b]<STD&&l.first===sug);
+  body=`<button class="link" data-a="stage" data-id="explore" style="margin-bottom:18px">← Back to the scores</button><h2 style="font-size:24px;margin-bottom:6px">One focus for the month</h2><p class="muted" style="margin-bottom:18px">${link?esc(link.t):'One pillar, so the month has a point. The lowest agreed score is suggested.'}</p>
+  <div class="ftiles">${P.map(p=>`<button class="ft ${f===p.id?'on':''}" data-a="focus" data-id="${p.id}"><small>${p.id===sug?'Suggested':'&nbsp;'}</small><span class="n">${c.agreed[p.id]}</span><b>${p.name}</b></button>`).join('')}</div>
+  ${fp?`<h2 style="font-size:22px;margin:34px 0 4px">One real assignment for ${fp.name}</h2><p class="muted">Done in the job this month. Pick one or write your own.</p>
+  <div class="asgs">${fp.asg.map((a,i)=>`<button class="asg ${c.asg===i?'on':''}" data-a="asg" data-id="${i}"><i></i><span>${esc(a.t)}<small>Works on ${a.tr}</small></span></button>`).join('')}
+   <button class="asg ${c.asg==='own'?'on':''}" data-a="asg" data-id="own"><i></i><span>Write your own</span></button>
+   ${c.asg==='own'?`<textarea id="own" data-own placeholder="A real task ${first(h)} will do in the job this month.">${esc(c.asgOwn)}</textarea>`:''}</div>
+  <div style="max-width:240px;margin-top:22px"><label class="fl" for="due">Due date</label><input type="date" id="due" data-due min="${TODAY}" value="${c.due||''}"></div>`:''}
+  <div class="snav"><span class="hint" data-hint="finish"></span><button class="btn" data-a="finish" data-gate="finish">Finish and create the summary</button></div>`;
+ } else {
+  body=`<div class="blank"><h2>This session is complete.</h2><p>Agreed on ${fDateL(c.sessionDate)}. Focus for the month: ${P[PI[c.focus]].name}. Next month opens with the assignment.</p><div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center"><a class="btn" href="#summary">Open the session summary</a><a class="btn ghost" href="#profile">See the profile</a></div></div>`;
+ }
+ return pick+`<div class="sess">${rail(h,st)}<div>${head}${body}</div></div>`;
+}
+function suggest(h){const a=h.cur.agreed;const l=LINKS.find(l=>a[l.a]<STD&&a[l.b]<STD);if(l)return l.first;return P.slice().sort((x,y)=>a[x.id]-a[y.id]||gap(h,y)-gap(h,x))[0].id}
+function finishMissing(h){const c=h.cur;if(!c.focus)return 'Pick one focus pillar.';if(c.asg==null)return 'Pick an assignment or write your own.';if(c.asg==='own'&&c.asgOwn.trim().length<8)return 'Write the assignment.';if(!c.due)return 'Set a due date.';return ''}
+
+/* ---------- Team ---------- */
+function vTeam(){
+ const hs=Object.values(S.heads),rows=hs.map(h=>({h,l:latest(h)}));
+ const withData=rows.filter(r=>r.l);
+ const avg=P.map((_,i)=>withData.reduce((s,r)=>s+r.l.ag[i],0)/withData.length);
+ const wi=avg.indexOf(Math.min(...avg)),done=hs.filter(h=>h.cur.done).length,low=withData.filter(r=>r.l.ag.some(v=>v<STD)).length;
+ const lowOn=withData.filter(r=>r.l.ag[wi]<STD).length;
+ const act=h=>{const s=status(h);if(S.role!=='james')return `<button class="btn ghost sm" data-a="prof" data-id="${h.id}">Profile</button>`;
+  const l={done:'Summary',live:'Continue',ready:'Reveal',score:'Score now',wait:'Open',none:'Score now'}[s.k];
+  return `<button class="btn ${s.k==='ready'||s.k==='live'?'':'ghost'} sm" data-a="${s.k==='done'?'sum':'sess'}" data-id="${h.id}">${l}</button>`};
+ return `<div class="page-h"><div><p class="eyebrow">${mName(NOW)} 2026 · ${quarter(NOW)} (Sep to Nov)</p><h1>The team this month</h1><p class="lead">Agreed scores only. Each head's latest session, against the standard of 7 on every pillar.</p></div></div>
+ <div class="stats"><div class="card stat"><small class="eyebrow">Team's weakest pillar</small><b>${P[wi].name}</b><p>Team average ${avg[wi].toFixed(1)}. ${lowOn} of ${withData.length} heads are below standard on it.</p></div>
+  <div class="card stat"><small class="eyebrow">Sessions this month</small><b class="num">${done} of ${hs.length}</b><p>${hs.filter(h=>status(h).k==='ready').length} ready to reveal. ${hs.filter(h=>!h.cur.selfAt).length} still to self-score.</p></div>
+  <div class="card stat"><small class="eyebrow">Below standard</small><b class="num">${low} of ${withData.length}</b><p>Heads with at least one pillar under 7 at their last session.</p></div></div>
+ <div class="tw"><table class="team"><thead><tr><th>Head</th>${P.map((p,i)=>`<th class="${i===wi?'weak':''}">${p.name}</th>`).join('')}<th>${mName(NOW)}</th><th></th></tr></thead>
+ <tbody>${rows.map(({h,l})=>`<tr><td><div class="hd"><i class="av h" style="font-style:normal">${h.ini}</i><div><b>${h.name}</b><small>${h.dept}${l&&l.m!==NOW?' · scores from '+mName(l.m):''}</small></div></div></td>
+  ${l?l.ag.map(v=>`<td><span class="sc num ${v<STD?'low':''}" ${v<STD?'title="Below standard"':''}>${v}</span></td>`).join(''):`<td colspan="6" class="dim" style="text-align:left;padding-left:16px">First session to come. No scores yet.</td>`}
+  <td><span class="chip ${status(h).cls}">${status(h).t}</span></td><td class="act">${act(h)}</td></tr>`).join('')}</tbody>
+ <tfoot><tr><td>Team average</td>${avg.map((v,i)=>`<td class="num" style="${i===wi?'color:var(--warn)':''}">${v.toFixed(1)}</td>`).join('')}<td></td><td></td></tr></tfoot></table></div>
+ <p class="hint" style="margin-top:14px">An outlined score is below the standard of 7. Heads never see this page. James's and Scott's own scores are kept separately and are not shown here.</p>`;
+}
+
+/* ---------- Profile ---------- */
+function vProfile(){
+ const own=isHead(),h=own?me():(S.heads[S.headId]||S.heads.tom),l=latest(h),pv=previous(h),ser=series(h),c=h.cur;
+ const pick=own?'':`<div class="hpick">${Object.values(S.heads).map(x=>`<button data-a="head" data-id="${x.id}" class="${x.id===h.id?'on':''}"><i class="av h" style="font-style:normal">${x.ini}</i>${x.name}</button>`).join('')}</div>`;
+ if(!l)return pick+`<div class="page-h"><div><p class="eyebrow">${h.dept}</p><h1>${own?'My profile':h.name}</h1></div></div><div class="blank"><div style="width:220px">${radar(null,null,{size:300,id:'e'})}</div><h2>${own?'Your shape appears after your first session.':'No sessions yet.'}</h2><p>${own?'Self-score first. Then you and James agree six scores together, and this page starts tracking how they move month to month.':`${first(h)} is new. The profile starts after the first session.`}</p>${own?'<a class="btn" href="#self-score">Start my self-score</a>':''}</div>`;
+ const d=P.map((_,i)=>pv?l.ag[i]-pv.ag[i]:0),ups=P.filter((_,i)=>d[i]>0),dns=P.filter((_,i)=>d[i]<0);
+ const mv=!pv?`${own?'Your':first(h)+"'s"} first month on the board.`:(!ups.length&&!dns.length)?`Holding steady since ${mName(pv.m)}.`:
+  [ups.length?`<span class="up">${ups.map(p=>p.name+' up '+d[PI[p.id]]).join(', ')}</span>`:'',dns.length?`<span class="dn">${dns.map(p=>p.name+' down '+Math.abs(d[PI[p.id]])).join(', ')}</span>`:''].filter(Boolean).join('. ')+` since ${mName(pv.m)}.`;
+ const qs=[...new Set(ser.map(x=>quarter(x.m)))].slice(-2);
+ const qavg=(q,i)=>{const a=ser.filter(x=>quarter(x.m)===q);return (a.reduce((s,x)=>s+x.ag[i],0)/a.length).toFixed(1)};
+ const lastAsg=c.done?{t:asgText(h),f:c.focus,due:c.due}:(h.hist.length&&h.hist[h.hist.length-1].asg?{t:h.hist[h.hist.length-1].asg,f:h.hist[h.hist.length-1].focus,due:h.hist[h.hist.length-1].due}:null);
+ return pick+`<div class="page-h" style="margin-bottom:8px"><div><p class="eyebrow">${own?'My profile':h.dept} · ${mName(l.m)} 2026</p><h1>${own?first(h)+', here is your month.':h.name}</h1></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="chip ok">Integrity: pass</span>${l.m!==NOW?`<span class="chip">${mName(NOW)} session still to come</span>`:''}</div></div>
+ <p class="move">${mv}</p>
+ <div class="prof"><div>${radar(l.ag,pv?pv.ag:null,{anim:true,id:'p'})}<div class="legend" style="justify-content:center;margin-top:6px"><span><i style="background:var(--grad)"></i>${mName(l.m)}</span>${pv?`<span><i style="background:none;border:1.5px solid rgba(255,255,255,.5)"></i>${mName(pv.m)}</span>`:''}<span><i style="background:none;border:1.5px dotted #fff"></i>The standard</span></div></div>
+  <div><div class="prow" style="border:0;padding-bottom:4px"><span class="eyebrow">Pillar</span><span class="eyebrow">${ser.length} month${ser.length>1?'s':''}</span><span></span><span></span><span class="eyebrow" style="text-align:right">${qs.join(' · ')} average</span></div>
+  ${P.map((p,i)=>`<div class="prow"><b>${p.name}</b>${spark(ser.map(x=>x.ag[i]))}<span class="big num">${l.ag[i]}</span><span class="delta ${d[i]>0?'up':d[i]<0?'dn':'eq'}">${!pv?'':d[i]>0?'▲ '+d[i]:d[i]<0?'▼ '+Math.abs(d[i]):'same'}</span><span class="q num">${l.ag[i]<STD?`<span class="chip ${own?'sea':'warn'}" style="margin-right:10px">${own?'Focus area':'Below standard'}</span>`:''}${qs.map(q=>qavg(q,i)).join(' · ')}</span></div>`).join('')}</div></div>
+ <div class="three"><div class="card"><p class="eyebrow">Open assignment${lastAsg?' · '+P[PI[lastAsg.f]].name:''}</p>${lastAsg?`<p style="margin-top:10px">${esc(lastAsg.t)}</p><p class="hint" style="margin-top:10px">Due ${fDateL(lastAsg.due)}. The next session opens with how it went.</p>`:'<p class="empty" style="margin-top:10px">No assignment yet.</p>'}</div>
+  <div class="card" style="grid-column:span 2"><p class="eyebrow">Results · from the scorecard</p><div class="kpis"><div class="kpi"><b class="num">94%</b><span>Of quarterly target</span></div><div class="kpi"><b class="num">4.6</b><span>Scorecard rating this quarter</span></div><div class="kpi"><b class="num">2 of 3</b><span>Priorities on track</span></div></div><p class="hint" style="margin-top:12px">Sample figures. The live tool pulls these from the existing scorecard. Results sit beside the pillars and are never blended into them.</p></div></div>`;
+}
+
+/* ---------- Summary ---------- */
+function vSummary(){
+ const own=isHead(),h=own?me():(S.heads[S.headId]||S.heads.priya),c=h.cur;
+ const pick=own?'':`<div class="hpick">${Object.values(S.heads).filter(x=>x.cur.done).map(x=>`<button data-a="head" data-id="${x.id}" class="${x.id===h.id?'on':''}"><i class="av h" style="font-style:normal">${x.ini}</i>${x.name}</button>`).join('')}</div>`;
+ if(!c.done)return pick+`<div class="blank"><h2>No summary for ${mName(NOW)} yet.</h2><p>${own?'It appears here as soon as you and James finish this month\'s session. One page: your scores, the evidence you discussed, your focus and your assignment.':`${first(h)}'s summary is created when the session is finished.`}</p>${own&&!c.selfAt?'<a class="btn" href="#self-score">Start my self-score</a>':''}</div>`;
+ const pv=h.hist[h.hist.length-1],ag=P.map(p=>c.agreed[p.id]),fp=P[PI[c.focus]],canPrint=(()=>{try{return window.self===window.top}catch(e){return false}})();
+ return pick+`<div class="sum-act"><span class="hint">One page. ${canPrint?'Save it as a PDF from the print dialog.':'PDF export is switched on in the live tool.'}</span>${canPrint?'<button class="btn sm" data-a="print">Save as PDF</button>':''}</div>
+ <div class="sheetwrap"><article class="sheet">
+  <div class="sh-top"><div><p class="eyebrow">SCCU Group · Leadership Pillars</p><p class="sh-name">${h.name}</p><p class="muted" style="font-size:14px;margin-top:6px">${h.dept} · Session with James Pease · ${fDateL(c.sessionDate)}</p></div><div style="text-align:right"><p class="eyebrow">Session summary</p><p style="font-family:var(--display);font-weight:700;font-size:20px;margin-top:4px">${mName(NOW)} 2026</p><span class="chip ok" style="margin-top:8px">Integrity: pass</span></div></div>
+  <div class="sh-grid"><div>${radar(ag,pv?pv.ag:null,{size:300,id:'s',tight:true})}</div>
+   <table class="sh-t"><thead><tr><th>Pillar</th><th>${first(h)}</th><th>James</th><th>Agreed</th><th>Since ${pv?mShort(pv.m):'last'}</th></tr></thead><tbody>
+   ${P.map((p,i)=>{const dl=pv?ag[i]-pv.ag[i]:0;return `<tr><td><b>${p.name}</b>${p.id===c.focus?' <span style="color:var(--pink-ink);font-size:11px;font-weight:800">FOCUS</span>':''}</td><td class="num" style="color:var(--sea);font-weight:800">${c.self[p.id].s}</td><td class="num" style="color:var(--pink-ink);font-weight:800">${c.james[p.id].s}</td><td><span class="ag num">${ag[i]}</span></td><td class="num delta ${dl>0?'up':dl<0?'dn':'eq'}">${!pv?'':dl>0?'▲ '+dl:dl<0?'▼ '+Math.abs(dl):'same'}</td></tr>`}).join('')}</tbody></table></div>
+  <div><p class="eyebrow" style="margin-bottom:10px">The evidence we discussed</p><div class="sh-ev">${P.map(p=>`<div><b>${p.name}</b><i class="h">${first(h)}, ${fDate(c.self[p.id].d)}.</i> ${esc(c.self[p.id].ex)}<br><i class="j">James, ${fDate(c.james[p.id].d)}.</i> ${esc(c.james[p.id].ex)}</div>`).join('')}</div></div>
+  <div class="sh-focus"><div><p class="eyebrow">Focus for the month</p><h3>${fp.name}</h3><p>${esc(asgText(h))}</p><p style="margin-top:10px;color:#fff;font-weight:700">Due ${fDateL(c.due)}</p></div></div>
+  <div class="sh-foot"><span>A score is where you were this month, based on what happened this month. Next month starts again, and opens with this assignment.</span><span style="white-space:nowrap">The dotted line is the standard</span></div>
+ </article></div>`;
+}
+
+/* ---------- gates, sliders, events ---------- */
+function gates(){
+ document.querySelectorAll('[data-gate]').forEach(b=>{let m='';const g=b.dataset.gate;
+  if(g==='self')m=selfMissing(me(),b.dataset.p);
+  if(g==='james'){const h=S.heads[S.headId],n=P.filter(p=>full(h.cur.james[p.id])).length;m=n<6?`${n} of 6 complete. Each needs a score, an example and a date.`:''}
+  if(g==='finish')m=finishMissing(S.heads[S.headId]);
+  b.disabled=!!m;const hint=document.querySelector(`[data-hint="${g}"]`);if(hint){hint.textContent=m;hint.classList.toggle('bad',/One case/.test(m))}});
+}
+function setScore(sl,v){
+ v=Math.max(1,Math.min(10,v));const ctx=sl.dataset.sl,h=S.heads[sl.dataset.h],pid=sl.dataset.p,p=P[PI[pid]];
+ const o=h.cur[ctx];if(!o[pid])o[pid]={s:null,ex:'',d:'',over:false};if(o[pid].s===v)return;o[pid].s=v;
+ sl.classList.remove('unset');sl.setAttribute('aria-valuenow',v);
+ sl.querySelector('.sl-fill').style.width=pct(v)+'%';const th=sl.querySelector('.sl-thumb');th.style.left=pct(v)+'%';th.firstElementChild.textContent=v;
+ const w=sl.closest('[data-slwrap]');if(w){const a=w.querySelector('[data-anchor]');a.className=ancCls(v);a.innerHTML=anchorHTML(p,v);
+  const wo=w.querySelector('[data-wo]'),wp=w.querySelector('[data-wp]');if(wo){wo.style.opacity=1-(v-1)/9*.7;wp.style.opacity=.3+(v-1)/9*.7}}
+ gates();save();
+}
+function valAt(sl,x){const r=sl.querySelector('.sl-track').getBoundingClientRect();return Math.round((x-r.left)/r.width*9)+1}
+let drag=null;
+document.addEventListener('pointerdown',e=>{const sl=e.target.closest('.sl');if(!sl||sl.classList.contains('lock'))return;drag=sl;try{sl.setPointerCapture(e.pointerId)}catch(_){}setScore(sl,valAt(sl,e.clientX));e.preventDefault();sl.focus()});
+document.addEventListener('pointermove',e=>{if(drag)setScore(drag,valAt(drag,e.clientX))});
+document.addEventListener('pointerup',()=>{drag=null});document.addEventListener('pointercancel',()=>{drag=null});
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'&&(ui.modal||ui.menu)){ui.modal=null;ui.menu=false;render();return}
+ const sl=e.target.closest&&e.target.closest('.sl');if(!sl)return;const cur=+sl.getAttribute('aria-valuenow')||0;
+ const d={ArrowRight:1,ArrowUp:1,ArrowLeft:-1,ArrowDown:-1}[e.key];if(d){setScore(sl,cur?cur+d:(d>0?6:5));e.preventDefault()}
+ if(e.key==='Home'){setScore(sl,1);e.preventDefault()} if(e.key==='End'){setScore(sl,10);e.preventDefault()}});
+document.addEventListener('input',e=>{const t=e.target;
+ if(t.dataset.f){const o=S.heads[t.dataset.h].cur[t.dataset.f],pid=t.dataset.p;if(!o[pid])o[pid]={s:null,ex:'',d:'',over:false};o[pid][t.dataset.k]=t.value;gates();save()}
+ else if(t.dataset.jx){S.jx[t.dataset.jx]=t.value;save()}
+ else if(t.dataset.own!==undefined){S.heads[S.headId].cur.asgOwn=t.value;gates();save()}
+ else if(t.dataset.due!==undefined){S.heads[S.headId].cur.due=t.value;gates();save()}
+ else if(t.dataset.over){const o=S.heads[S.headId].cur.james,pid=t.dataset.over;if(!o[pid])o[pid]={s:null,ex:'',d:'',over:false};o[pid].over=t.checked;t.closest('.jrow').querySelector('[data-fake]').style.display=t.checked?'block':'none';save()}});
+const A={
+ menu(){ui.menu=!ui.menu},
+ role(d){S.role=d.id;ui.menu=false;ui.mopen=null;if(S.heads[d.id]){S.headId=d.id}location.hash=routes()[0][0]},
+ reset(){const jx=S.jx||{};S=seed();S.jx=jx;ui={menu:false,modal:null,open:null,mopen:null};location.hash='team'},
+ modal(d){ui.modal=d.id}, close(d,el,e){if(e.target.closest('.dlg')&&!e.target.closest('[data-a="close"]'))return false;ui.modal=null},
+ mopen(d){ui.mopen=d.id||null;window.scrollTo(0,0)},
+ 'ss-go'(d){const h=me(),n=+d.id;h.cur.step=Math.max(-1,Math.min(6,n));window.scrollTo(0,0)},
+ 'ss-submit'(){const h=me();if(allFull(h.cur.self)){h.cur.selfAt=TODAY;window.scrollTo(0,0)}},
+ head(d){S.headId=d.id;ui.open=null},
+ sess(d){S.headId=d.id;ui.open=null;location.hash='session'}, sum(d){S.headId=d.id;location.hash='summary'}, prof(d){S.headId=d.id;location.hash='profile'},
+ 'j-fill'(){const h=S.heads.tom;P.forEach((p,i)=>h.cur.james[p.id]=JSON.parse(JSON.stringify(TOM_SAMPLE[i])))},
+ 'j-lock'(){const h=S.heads[S.headId];if(allFull(h.cur.james)){h.cur.jamesAt=TODAY;window.scrollTo(0,0)}},
+ review(d){S.heads[S.headId].cur.review=d.id},
+ reveal(){const h=S.heads[S.headId],c=h.cur;c.revealed=true;c.stage='explore';c.startedAt=Date.now();ui.justRevealed=true;ui.open=null;window.scrollTo(0,0)},
+ xopen(d){ui.open=ui.open===d.id?null:d.id},
+ agree(d){S.heads[S.headId].cur.agreed[d.p]=+d.id},
+ stage(d){S.heads[S.headId].cur.stage=d.id;window.scrollTo(0,0)},
+ focus(d){const c=S.heads[S.headId].cur;if(c.focus!==d.id){c.focus=d.id;c.asg=null}},
+ asg(d){S.heads[S.headId].cur.asg=d.id==='own'?'own':+d.id},
+ finish(){const h=S.heads[S.headId],c=h.cur;if(finishMissing(h))return;c.done=true;c.sessionDate=TODAY;c.endedAt=Date.now();location.hash='summary';window.scrollTo(0,0)},
+ print(){try{window.print()}catch(e){}}
+};
+document.addEventListener('click',e=>{
+ const el=e.target.closest('[data-a]');
+ if(!el){if(ui.menu&&!e.target.closest('.menu')){ui.menu=false;render()}return}
+ if(el.disabled)return;const fn=A[el.dataset.a];if(!fn)return;
+ const before=location.hash;const r=fn(el.dataset,el,e);if(r===false)return;save();
+ if(location.hash===before)render();
+});
+window.addEventListener('hashchange',()=>{ui.menu=false;render()});
+setInterval(()=>{const el=document.querySelector('[data-clock]');if(!el||!el.dataset.s)return;const t=Math.floor(((+el.dataset.e||Date.now())-+el.dataset.s)/1000);el.textContent=String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0')},500);
+render();
+</script>
+</body>
+</html>
