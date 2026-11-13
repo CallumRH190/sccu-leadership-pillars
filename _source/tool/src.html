@@ -896,7 +896,7 @@ const A={
  'j-fill'(){const h=S.heads.tom;P.forEach((p,i)=>h.cur.james[p.id]=JSON.parse(JSON.stringify(TOM_SAMPLE[i])))},
  'j-lock'(){const h=S.heads[S.headId];if(allFull(h.cur.james)){h.cur.jamesAt=TODAY;window.scrollTo(0,0)}},
  review(d){S.heads[S.headId].cur.review=d.id},
- reveal(){const h=S.heads[S.headId],c=h.cur;unseal(c);c.revealed=true;c.stage='explore';c.startedAt=Date.now();ui.justRevealed=true;ui.open=null;window.scrollTo(0,0)},
+ reveal(){const h=S.heads[S.headId],c=h.cur;unseal(c);ui.codeMsg='';ui.codeErr=false;c.revealed=true;c.stage='explore';c.startedAt=Date.now();ui.justRevealed=true;ui.open=null;window.scrollTo(0,0)},
  xopen(d){ui.open=ui.open===d.id?null:d.id},
  agree(d){S.heads[S.headId].cur.agreed[d.p]=+d.id},
  stage(d){S.heads[S.headId].cur.stage=d.id;window.scrollTo(0,0)},
