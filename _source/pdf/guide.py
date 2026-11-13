@@ -46,12 +46,12 @@ ul li::before{{content:"";position:absolute;left:0;top:7px;width:6px;height:6px;
 <li><b>Set it up.</b> Open the trial on the laptop you will run the session on. Type the head's name. It stays in your browser.</li>
 <li><b>Send their link.</b> Press Copy the link and send it to them with the message below. Give them a day or two.</li>
 <li><b>Score them yourself.</b> Six pillars, one dated example each. About ten minutes. Then press Lock my scores.</li>
-<li><b>Open the link they send back.</b> Same laptop, same browser. Their scores load and stay hidden until the reveal.</li>
+<li><b>Open the link they send back.</b> Same laptop, same browser. The link is long, which is normal. Their scores load and stay hidden until the reveal.</li>
 </ol></div>
 <div class="card"><h3>In the room, about 20 to 30 minutes</h3><ol>
 <li><b>Say what it is.</b> "This is where you were this month. It isn't who you are."</li>
 <li><b>Reveal both sets.</b> Turn the screen so you can both see it.</li>
-<li><b>Take the biggest gap first.</b> They talk first. Ask "What happened that puts you there?" Then give your example.</li>
+<li><b>Take the biggest gap first.</b> They talk first. Use the opening line on screen. Then give your example.</li>
 <li><b>Agree a score for each pillar.</b> Never the average.</li>
 <li><b>One focus, one assignment, one date.</b></li>
 <li><b>Save the summary</b> as a PDF and send them a copy. Then press Download a backup.</li>

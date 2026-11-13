@@ -150,6 +150,7 @@ label.fl{display:block;font-weight:700;font-size:14px;margin-bottom:8px}
 .rrow h3{font-size:17px}
 .rrow small{color:var(--ink-3);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
 .rrow p{color:var(--ink-2);font-size:15px;margin-top:10px}
+.rrow>div,.ev,.sh-ev div,.two>div,.evi>div{min-width:0}.rrow p,.ev p,.sh-ev div,.xc-b p,.open-line,textarea{overflow-wrap:anywhere}
 .mini{position:relative;height:22px}
 .mini i{position:absolute;left:0;right:0;top:50%;height:4px;margin-top:-2px;border-radius:4px;background:rgba(255,255,255,.14)}
 .mk{position:absolute;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800}
@@ -309,8 +310,9 @@ table.team{width:100%;border-collapse:collapse;min-width:860px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media print{
-  .top,.sum-act{display:none!important} body,main{background:var(--navy);padding:0;margin:0;max-width:none}
-  .sheet{border:0;box-shadow:none;margin:0} *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:A4;margin:0}
+  .top,.sum-act,.hpick,.prn-hide{display:none!important} body,main{background:var(--navy);padding:0;margin:0;max-width:none}
+  .sheetwrap{overflow:visible}.sheet{border:0;box-shadow:none;margin:0 auto;min-height:0;zoom:var(--pz,1)} *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 </style>
 </head>
@@ -471,6 +473,8 @@ let S, ui={menu:false,modal:null,open:null,mopen:null};
 const KEY=TRIAL?(HEADMODE?'sccu-pillars-trial-head-v1':'sccu-pillars-trial-v1'):'sccu-pillars-demo-v3';
 function load(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.v===(TRIAL?1:3)&&(!TRIAL||HEADMODE===!!(r.heads&&r.heads.me)))return r}catch(e){}return seed()}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function resync(){try{const r=localStorage.getItem(KEY);if(r&&r!==JSON.stringify(S)){const o=JSON.parse(r);if(o&&o.v===S.v){S=o;render()}}}catch(e){}}
+window.addEventListener('storage',e=>{if(e.key===KEY)resync()});window.addEventListener('focus',resync);document.addEventListener('visibilitychange',()=>{if(!document.hidden)resync()});
 S=load();
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const isHead=()=>S.role!=='james'&&S.role!=='scott';
@@ -549,17 +553,26 @@ const pageBase=()=>location.href.split(/[?#]/)[0];
 const b64e=s=>btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 const b64d=s=>{s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return decodeURIComponent(escape(atob(s)))};
 function copyText(v){try{if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(v).catch(()=>{});return}}catch(e){}const t=document.createElement('textarea');t.value=v;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();try{document.execCommand('copy')}catch(e){}t.remove()}
-function makeCode(h){return 'LP1.'+b64e(JSON.stringify({v:1,n:h.name.trim(),m:NOW,at:h.cur.selfAt,s:P.map(p=>{const e=h.cur.self[p.id];return [e.s,e.ex,e.d]})}))}
+function makeCode(h){return 'LP1.'+b64e(JSON.stringify({v:1,n:h.name.trim(),m:NOW,at:h.cur.selfAt,t:h.cur.subT||0,s:P.map(p=>{const e=h.cur.self[p.id];return [e.s,e.ex,e.d]})}))}
 function readCode(raw){try{let t=String(raw||'').trim();const i=t.indexOf('LP1.');if(i<0)return null;t=t.slice(i+4).replace(/\s+/g,'');const o=JSON.parse(b64d(t));
  if(o.v!==1||!Array.isArray(o.s)||o.s.length!==6)return null;
  for(const r of o.s){if(!(r[0]>=1&&r[0]<=10)||typeof r[1]!=='string'||!/^\d{4}-\d\d-\d\d$/.test(r[2]))return null}
  return o}catch(e){return null}}
-function applyCode(o){
- const hs=Object.values(S.heads);if(!hs.length){S.pending=o;return 'Add the head first. Their scores load as soon as you do.'}
- const nm=(o.n||'').toLowerCase().split(' ')[0];const h=hs.find(x=>nm&&first(x).toLowerCase()===nm)||curH();
- if(h.cur.revealed){ui.codeErr=true;return `${first(h)}'s session has already been revealed, so new scores can't be loaded.`}
- P.forEach((p,i)=>h.cur.self[p.id]={s:+o.s[i][0],ex:o.s[i][1],d:o.s[i][2],over:false});h.cur.selfAt=o.at||TODAY;h.cur.step=6;S.headId=h.id;S.pending=null;ui.codeErr=false;
+function applyCode(o,toId){
+ const hs=Object.values(S.heads);if(!hs.length){S.pending=o;ui.codeErr=false;return 'Add the head first. Their scores load as soon as you do.'}
+ const nm=(o.n||'').toLowerCase().split(' ')[0];
+ const h=toId?S.heads[toId]:(hs.length===1?hs[0]:hs.find(x=>nm&&first(x).toLowerCase()===nm));
+ if(!h){S.pending=o;ui.codeErr=false;return ''}
+ const c=h.cur;S.pending=null;
+ if(c.revealed){ui.codeErr=true;return `${first(h)}'s session has already been revealed, so new scores can't be loaded.`}
+ if(c.sealedT&&o.t&&o.t<c.sealedT){ui.codeErr=true;return `That is an older set of scores from ${o.n||first(h)}. The newer set is already loaded.`}
+ c.sealed='LP1.'+b64e(JSON.stringify(o));c.sealedT=o.t||0;c.self={};c.selfAt=o.at||TODAY;S.headId=h.id;ui.codeErr=false;
  return `${o.n?o.n+"'s":'The'} scores are loaded into ${h.name}'s session. They stay hidden until you reveal both sets.`}
+function unseal(c){if(!c.sealed)return;const o=readCode(c.sealed);if(o)P.forEach((p,i)=>c.self[p.id]={s:+o.s[i][0],ex:o.s[i][1],d:o.s[i][2],over:false});c.sealed=null}
+function pendingHTML(){if(!S.pending||!Object.keys(S.heads).length)return '';
+ return `<div class="card prn-hide" style="margin:0 0 22px;border-color:var(--sea)"><p class="eyebrow">Scores have arrived from ${esc(S.pending.n||'a head')}</p><p style="margin:8px 0 12px;color:var(--ink-2)">Whose session are they for?</p><div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">${Object.values(S.heads).filter(h=>!h.cur.revealed).map(h=>`<button class="btn ghost sm" data-a="assign" data-id="${h.id}">${esc(h.name)}</button>`).join('')}<button class="link" data-a="drop-pending">Ignore them</button></div></div>`}
+function noteHTML(){if(!TRIAL||HEADMODE)return '';
+ return pendingHTML()+(ui.codeMsg?`<div class="hidden-note prn-hide" style="margin-bottom:22px${ui.codeErr?';border-color:var(--warn)':''}"><span class="lockic">${ui.codeErr?'!':'🔒'}</span><span>${esc(ui.codeMsg)}</span><button class="link" data-a="dismiss" style="margin-left:auto;white-space:nowrap">Dismiss</button></div>`:'')}
 function setupHTML(){const any=Object.keys(S.heads).length>0;ui.nh=ui.nh||{n:'',d:''};
  return `<div class="intro"><p class="eyebrow">Trial version${any?' · add a head':''}</p><h1>${any?'Who is the next session with?':'Who is this session with?'}</h1>
  <p class="muted" style="font-size:18px">${any?'':'This is the trial version. It runs real sessions without logins, and everything you enter stays in this browser on this device. '}Their name is never sent anywhere.</p>
@@ -573,12 +586,12 @@ function inviteHTML(h){const c=h.cur,link=pageBase()+'?who=head',f=first(h);
  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><input type="text" readonly id="inv" value="${esc(link)}" aria-label="Private scoring link" style="flex:1;min-width:240px"><button class="btn sm" data-a="copy" data-id="inv">${ui.copied==='inv'?'Copied':'Copy the link'}</button></div>`}
  <label class="fl" for="code" style="margin-top:16px;display:block">${c.selfAt?'Paste a newer code':`Or paste the code ${f} sent you`}</label>
  <textarea id="code" data-code placeholder="Starts with LP1." style="min-height:56px">${esc(ui.code||'')}</textarea>
- <div class="snav" style="justify-content:flex-start;margin-top:10px"><button class="btn ghost sm" data-a="load-code">Load the scores</button><span class="hint ${ui.codeErr?'bad':''}">${ui.codeErr?esc(ui.codeMsg||''):''}</span></div></div>`}
+ <div class="snav" style="justify-content:flex-start;margin-top:10px"><button class="btn ghost sm" data-a="load-code">Load the scores</button></div></div>`}
 function sendHTML(h){const code=makeCode(h),link=pageBase()+'#code='+code;
  return `<div class="card" style="margin:22px 0"><p class="eyebrow">Last step · send it to James</p><p style="margin:8px 0 14px;color:var(--ink-2)">Send James the link below. Your numbers stay hidden on his screen until he has locked his own and you reveal both sets together.</p>
  <div class="snav" style="justify-content:flex-start;margin-top:0"><button class="btn" data-a="share">${ui.copied==='share'?'Copied. Now paste it to James':'Send to James'}</button><button class="btn ghost" data-a="copy" data-id="sendcode">${ui.copied==='sendcode'?'Copied':'Copy the code only'}</button></div>
  <textarea id="sendlink" readonly style="min-height:70px;margin-top:14px;font-size:12px;word-break:break-all" aria-label="Your link for James">${esc(link)}</textarea><textarea id="sendcode" readonly hidden>${esc(code)}</textarea>
- <p class="hint" style="margin-top:8px">Nothing has left this device yet. James only gets your scores when you send him this.</p>
+ <p class="hint" style="margin-top:8px">${h.cur.changed?'You changed your answers, so send James this new link. It replaces the one you sent before.':'Nothing has left this device yet. James only gets your scores when you send him this.'} The link is long. That is normal.</p>
  <button class="link" data-a="unlock" style="margin-top:12px">I need to change something first</button></div>`}
 function headIntro(h){return `<div class="intro"><p class="eyebrow">${mName(NOW)} ${YEAR} · Self-score</p><h1>Welcome. This is your first one.</h1>
  <p class="muted" style="font-size:18px">Once a month you score yourself on six pillars, James scores you, and the two of you compare. It takes about ten minutes.</p>
@@ -606,7 +619,7 @@ function render(){
   <a class="brand" href="#${routes()[0][0]}"><small>SCCU GROUP</small><b>Leadership Pillars</b></a>
   <nav class="nav" aria-label="Views">${routes().map(([k,l])=>`<a href="#${k}" class="${k===r?'on':''}">${l}</a>`).join('')}</nav>
   <div class="top-r"><span class="pill">${TRIAL?'Trial':'Sample data'}</span>${whoHTML()}</div></div></header>
-  <main>${views[r]()}</main>${modal()}`;
+  <main>${noteHTML()}${views[r]()}</main>${modal()}`;
  gates(); animRadar();
  if(document.querySelector('.rv.pre[data-auto]'))requestAnimationFrame(()=>requestAnimationFrame(()=>{const e=document.querySelector('.rv');if(e){e.classList.remove('pre');e.classList.add('go');e.querySelectorAll('[data-to]').forEach(m=>m.style.left=m.dataset.to+'%')}}));
 }
@@ -710,11 +723,11 @@ function vSession(){
    <div class="evi"><div><textarea id="jex-${p.id}" aria-label="Your example for ${p.name}" data-f="james" data-h="${h.id}" data-p="${p.id}" data-k="ex" placeholder="What did you see? One real example." style="min-height:64px">${esc(e.ex||'')}</textarea></div><div><input type="date" id="jd-${p.id}" aria-label="Date of your example for ${p.name}" min="${MIND}" max="${TODAY}" value="${e.d||''}" data-f="james" data-h="${h.id}" data-p="${p.id}" data-k="d"></div></div></div></div>`}).join('')}
   <div class="snav"><span class="hint" data-hint="james"></span><button class="btn" data-a="j-lock" data-gate="james">Lock my scores</button></div>`;
  } else if(st==='wait'){
-  body=`${TRIAL?inviteHTML(h):''}<div class="blank"><h2>Your scores are locked.</h2><p>${TRIAL?`${first(h)}'s scores haven't arrived yet. The reveal opens as soon as they load. Nothing is visible to either of you until then.`:`${first(h)} hasn't self-scored yet. The reveal opens as soon as ${first(h)} submits. Nothing is visible to either of you until then.`}</p>${TRIAL?'':`<p class="hint">For the demo: switch to ${h.name} from the menu top right, complete the self-score, then come back.</p>`}</div>`;
+  body=`${TRIAL?inviteHTML(h):''}<div class="blank"><h2>Your scores are locked.</h2><p>${TRIAL?`${first(h)}'s scores haven't arrived yet. The reveal opens as soon as they load. Nothing is visible to either of you until then.`:`${first(h)} hasn't self-scored yet. The reveal opens as soon as ${first(h)} submits. Nothing is visible to either of you until then.`}</p><button class="link" data-a="j-unlock">I need to change my scores</button>${TRIAL?'':`<p class="hint">For the demo: switch to ${h.name} from the menu top right, complete the self-score, then come back.</p>`}</div>`;
  } else if(st==='reveal'){
   const last=h.hist[h.hist.length-1];
   body=`${last&&last.asg?`<div class="card" style="margin-bottom:16px"><p class="eyebrow">Open with last month · ${P[PI[last.focus]].name}</p><p style="margin:8px 0 4px">${esc(last.asg)}</p><p class="open-line" style="font-size:17px;margin:12px 0">How did the assignment go? What did you do, on what date, and what changed?</p><div class="agree">${[['done','Done'],['part','Partly'],['no','Not done']].map(([k,l])=>`<button style="width:auto;padding:0 16px" class="${c.review===k?'on':''}" data-a="review" data-id="${k}">${l}</button>`).join('')}</div></div>`:''}
-  <div class="rv-cta"><p class="eyebrow">Both sets are in</p><h2>${first(h)} scored on ${fDate(c.selfAt)}. You scored on ${fDate(c.jamesAt)}.</h2><p class="muted" style="max-width:52ch">Neither of you has seen the other's numbers. Turn the screen so you can both see it.</p><button class="btn" data-a="reveal">Reveal both sets</button></div>
+  <div class="rv-cta"><p class="eyebrow">Both sets are in</p><h2>${first(h)} scored on ${fDate(c.selfAt)}. You scored on ${fDate(c.jamesAt)}.</h2><p class="muted" style="max-width:52ch">Neither of you has seen the other's numbers. Turn the screen so you can both see it.</p><button class="btn" data-a="reveal">Reveal both sets</button><p style="margin-top:14px"><button class="link" data-a="j-unlock">I need to change my scores first</button></p></div>
   <div class="rv pre">${P.map(p=>`<div class="rv-row"><div><span class="o">${p.opp} to</span><h3>${p.name}</h3></div><div class="rv-track"><i></i></div><div></div></div>`).join('')}</div>`;
  } else if(st==='explore'){
   const order=byGap(h),ag=P.filter(p=>c.agreed[p.id]).length,big=order[0],same=order.filter(p=>gap(h,p)===0);
@@ -751,7 +764,7 @@ function vSession(){
  } else {
   body=`<div class="blank"><h2>This session is complete.</h2><p>Agreed on ${fDateL(c.sessionDate)}. Focus for the month: ${P[PI[c.focus]].name}. Next month opens with the assignment.</p><div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center"><a class="btn" href="#summary">Open the session summary</a><a class="btn ghost" href="#profile">See the profile</a></div></div>`;
  }
- return pick+`<div class="sess">${rail(h,st)}<div>${head}${TRIAL&&ui.codeMsg&&!ui.codeErr?`<div class="hidden-note" style="margin-bottom:22px"><span class="lockic">🔒</span><span>${esc(ui.codeMsg)}</span></div>`:''}${body}</div></div>`;
+ return pick+`<div class="sess">${rail(h,st)}<div>${head}${body}</div></div>`;
 }
 function suggest(h){const a=h.cur.agreed;const l=LINKS.find(l=>a[l.a]<STD&&a[l.b]<STD);if(l)return l.first;return P.slice().sort((x,y)=>a[x.id]-a[y.id]||gap(h,y)-gap(h,x))[0].id}
 function finishMissing(h){const c=h.cur;if(!c.focus)return 'Pick one focus pillar.';if(c.asg==null)return 'Pick an assignment or write your own.';if(c.asg==='own'&&c.asgOwn.trim().length<8)return 'Write the assignment.';if(!c.due)return 'Set a due date.';return ''}
@@ -776,7 +789,7 @@ function vTeam(){
   ${l?l.ag.map(v=>`<td><span class="sc num ${v<STD?'low':''}" ${v<STD?'title="Below standard"':''}>${v}</span></td>`).join(''):`<td colspan="6" class="dim" style="text-align:left;padding-left:16px">First session to come. No scores yet.</td>`}
   <td><span class="chip ${status(h).cls}">${status(h).t}</span></td><td class="act">${act(h)}</td></tr>`).join('')}</tbody>
  ${has?`<tfoot><tr><td>Team average</td>${avg.map((v,i)=>`<td class="num" style="${i===wi?'color:var(--warn)':''}">${v.toFixed(1)}</td>`).join('')}<td></td><td></td></tr></tfoot>`:''}</table></div>
- <p class="hint" style="margin-top:14px">An outlined score is below the standard of 7. Heads never see this page. James's and Scott's own scores are kept separately and are not shown here.</p>`;
+ <p class="hint" style="margin-top:14px">An outlined score is below the standard of 7. Heads never see this page.${TRIAL?'':" James's and Scott's own scores are kept separately and are not shown here."}</p>`;
 }
 
 /* ---------- Profile ---------- */
@@ -824,7 +837,7 @@ function vSummary(){
 function gates(){
  document.querySelectorAll('[data-gate]').forEach(b=>{let m='';const g=b.dataset.gate;
   if(g==='self')m=selfMissing(me(),b.dataset.p);
-  if(g==='james'){const h=S.heads[S.headId],n=P.filter(p=>full(h.cur.james[p.id])).length;m=n<6?`${n} of 6 complete. Each needs a score, an example and a date.`:''}
+  if(g==='james'){const h=S.heads[S.headId],n=P.filter(p=>full(h.cur.james[p.id])).length;m=n<6?`${n} of 6 complete. Each needs a score, a date and an example of a few words.`:''}
   if(g==='finish')m=finishMissing(S.heads[S.headId]);
   if(g==='newhead')m=((ui.nh&&ui.nh.n)||'').trim().length<2?'Type their name.':'';
   if(g==='hname')m=(me().name||'').trim().length<2?'Type your first name to start.':'';
@@ -863,10 +876,12 @@ const A={
  copy(d){const el=document.getElementById(d.id);copyText(el?el.value:'');ui.copied=d.id},
  share(){const link=pageBase()+'#code='+makeCode(me()),text='My Leadership Pillars scores for our session. Open this on the device you will run the session on: '+link;
   if(navigator.share){navigator.share({text}).catch(()=>{})}else copyText(link);ui.copied='share'},
- unlock(){const h=me();h.cur.selfAt=null;h.cur.step=6;ui.copied=null;window.scrollTo(0,0)},
+ unlock(){const h=me();h.cur.selfAt=null;h.cur.changed=true;h.cur.step=6;ui.copied=null;window.scrollTo(0,0)},
  'load-code'(){const o=readCode(ui.code);if(!o){ui.codeErr=true;ui.codeMsg="That doesn't look like a scores code. It starts with LP1.";return}ui.codeMsg=applyCode(o);if(!ui.codeErr)ui.code=''},
- 'add-head'(){const n=(ui.nh.n||'').trim(),dp=(ui.nh.d||'').trim();if(n.length<2)return false;const id='h'+Date.now().toString(36);S.heads[id]=mkHead(id,n,dp||'Head of department',[],{});S.headId=id;ui.nh={n:'',d:''};ui.adding=false;ui.open=null;if(S.pending)ui.codeMsg=applyCode(S.pending);location.hash='session'},
+ 'add-head'(){const n=(ui.nh.n||'').trim(),dp=(ui.nh.d||'').trim();if(n.length<2)return false;const id='h'+Date.now().toString(36);S.heads[id]=mkHead(id,n,dp||'Head of department',[],{});S.headId=id;ui.nh={n:'',d:''};ui.adding=false;ui.open=null;if(S.pending){ui.codeMsg=applyCode(S.pending);ui.noteKeep=1}location.hash='session'},
  'new-head'(){ui.adding=true;ui.menu=false;location.hash='team'}, 'cancel-add'(){ui.adding=false},
+ assign(d){ui.codeMsg=applyCode(S.pending,d.id)}, 'drop-pending'(){S.pending=null;ui.codeMsg='';ui.codeErr=false}, dismiss(){ui.codeMsg='';ui.codeErr=false},
+ 'j-unlock'(){const c=S.heads[S.headId].cur;if(!c.revealed){c.jamesAt=null;window.scrollTo(0,0)}},
  backup(){const b=new Blob([JSON.stringify(S,null,1)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='leadership-pillars-trial-backup-'+TODAY+'.json';document.body.appendChild(a);a.click();a.remove();ui.menu=false},
  restore(){document.getElementById('rf').click();ui.menu=false},
  clear(){if(ui.confirm!=='clear'){ui.confirm='clear';return}S=seed();ui={menu:false,modal:null,open:null,mopen:null};location.hash=routes()[0][0]},
@@ -875,20 +890,20 @@ const A={
  modal(d){ui.modal=d.id}, close(d,el,e){if(e.target.closest('.dlg')&&!e.target.closest('[data-a="close"]'))return false;ui.modal=null},
  mopen(d){ui.mopen=d.id||null;window.scrollTo(0,0)},
  'ss-go'(d){const h=me(),n=+d.id;h.cur.step=Math.max(-1,Math.min(6,n));window.scrollTo(0,0)},
- 'ss-submit'(){const h=me();if(allFull(h.cur.self)){h.cur.selfAt=TODAY;window.scrollTo(0,0)}},
+ 'ss-submit'(){const h=me();if(allFull(h.cur.self)){h.cur.selfAt=TODAY;h.cur.subT=Date.now();window.scrollTo(0,0)}},
  head(d){S.headId=d.id;ui.open=null},
  sess(d){S.headId=d.id;ui.open=null;location.hash='session'}, sum(d){S.headId=d.id;location.hash='summary'}, prof(d){S.headId=d.id;location.hash='profile'},
  'j-fill'(){const h=S.heads.tom;P.forEach((p,i)=>h.cur.james[p.id]=JSON.parse(JSON.stringify(TOM_SAMPLE[i])))},
  'j-lock'(){const h=S.heads[S.headId];if(allFull(h.cur.james)){h.cur.jamesAt=TODAY;window.scrollTo(0,0)}},
  review(d){S.heads[S.headId].cur.review=d.id},
- reveal(){const h=S.heads[S.headId],c=h.cur;c.revealed=true;c.stage='explore';c.startedAt=Date.now();ui.justRevealed=true;ui.open=null;window.scrollTo(0,0)},
+ reveal(){const h=S.heads[S.headId],c=h.cur;unseal(c);c.revealed=true;c.stage='explore';c.startedAt=Date.now();ui.justRevealed=true;ui.open=null;window.scrollTo(0,0)},
  xopen(d){ui.open=ui.open===d.id?null:d.id},
  agree(d){S.heads[S.headId].cur.agreed[d.p]=+d.id},
  stage(d){S.heads[S.headId].cur.stage=d.id;window.scrollTo(0,0)},
  focus(d){const c=S.heads[S.headId].cur;if(c.focus!==d.id){c.focus=d.id;c.asg=null}},
  asg(d){S.heads[S.headId].cur.asg=d.id==='own'?'own':+d.id},
  finish(){const h=S.heads[S.headId],c=h.cur;if(finishMissing(h))return;c.done=true;c.sessionDate=TODAY;c.endedAt=Date.now();location.hash='summary';window.scrollTo(0,0)},
- print(){try{window.print()}catch(e){}}
+ print(){fitPrint();try{window.print()}catch(e){}}
 };
 document.addEventListener('click',e=>{
  const el=e.target.closest('[data-a]');
@@ -897,10 +912,13 @@ document.addEventListener('click',e=>{
  const before=location.hash;const r=fn(el.dataset,el,e);if(r===false)return;save();
  if(location.hash===before)render();
 });
-window.addEventListener('hashchange',()=>{ui.menu=false;takeIncoming();render()});
+window.addEventListener('hashchange',()=>{ui.menu=false;if(!takeIncoming()){if(ui.noteKeep)ui.noteKeep=0;else{ui.codeMsg='';ui.codeErr=false}}render()});
 setInterval(()=>{const el=document.querySelector('[data-clock]');if(!el||!el.dataset.s)return;const t=Math.floor(((+el.dataset.e||Date.now())-+el.dataset.s)/1000);el.textContent=String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0')},500);
 document.addEventListener('change',e=>{if(e.target.id!=='rf')return;const f=e.target.files[0];if(!f)return;const r=new FileReader();
- r.onload=()=>{try{const o=JSON.parse(r.result);if(o&&o.v===1&&o.heads&&!o.heads.me){S=o;S.role='james';save();ui.menu=false;ui.codeMsg='';location.hash='team';render()}}catch(_){}e.target.value=''};r.readAsText(f)});
+ r.onload=()=>{let ok=false;try{const o=JSON.parse(r.result);if(o&&o.v===1&&o.heads&&!o.heads.me){S=o;S.role='james';save();ok=true}}catch(_){}
+  ui.menu=false;ui.codeErr=!ok;ui.codeMsg=ok?'Backup restored.':"That file isn't a Leadership Pillars backup. Nothing was changed.";if(location.hash!=='#team'){ui.noteKeep=1;location.hash='team'}render();e.target.value=''};r.readAsText(f)});
+function fitPrint(){const sh=document.querySelector('.sheet');if(sh)document.documentElement.style.setProperty('--pz',String(Math.min(1,1118/sh.offsetHeight)))}
+window.addEventListener('beforeprint',fitPrint);
 function takeIncoming(){if(!(TRIAL&&!HEADMODE&&/^#code=/.test(location.hash)))return false;const o=readCode(location.hash.slice(6));try{history.replaceState(null,'',pageBase()+'#session')}catch(e){}
  if(o){ui.codeMsg=applyCode(o);save()}else{ui.codeErr=true;ui.codeMsg="That link didn't carry a readable scores code. Ask for it again, or paste the code."}return true}
 takeIncoming();
